@@ -1,0 +1,24 @@
+Scenario.endTime = 1000
+Scenario.name = bpmn_ping_pong
+
+# Define new application
+bpmApp.type = bpm.BpmEngineApplication
+
+# Set BPM app for all nodes
+Group.nrofApplications = 1
+Group.application1 = bpmApp
+
+# Add report for Ping app
+Report.nrofReports = 2
+Report.report1 = BpmAppReporter
+Report.report2 = DetailedBpmReporter
+Report.reportDir = reports/bpm_pingpong
+
+Scenario.nrofHostGroups = 1
+
+bpmApp.autoDeployedProcesses = data/bpm-examples/Ping.bpmn20.xml,data/bpm-examples/Pong.bpmn20.xml
+# Ping proces is started by a signal
+# Pong process is started by a message sent from the Ping process.
+# Because of this, there's no need to define any starting of the processes in this case here, just deployment is enough
+
+

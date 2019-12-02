@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <signal id="signal_nearby_device" name="Device Nearby" flowable:scope="global"></signal>
+  <message id="msg_pong" name="pong"></message>
+  <message id="msg_ping" name="ping"></message>
+  <process id="fog-pong" name="Fog Pong" isExecutable="true">
+    <endEvent id="end" name="End"></endEvent>
+    <intermediateCatchEvent id="sid-160518EE-14AB-4D61-9591-A40B46A4FC0C" name="Received Pong">
+      <messageEventDefinition messageRef="msg_pong"></messageEventDefinition>
+    </intermediateCatchEvent>
+    <serviceTask id="sendTask" name="Send Ping" flowable:class="ee.mass.epm.sim.task.MessageTask" flowable:triggerable="true"></serviceTask>
+    <sequenceFlow id="sid-69E9A1AD-43D5-45FE-9C94-88A627283C13" sourceRef="sendTask" targetRef="sid-160518EE-14AB-4D61-9591-A40B46A4FC0C"></sequenceFlow>
+    <intermediateCatchEvent id="signal_received" name="Device Nearby">
+      <signalEventDefinition signalRef="signal_nearby_device"></signalEventDefinition>
+    </intermediateCatchEvent>
+    <sequenceFlow id="sid-FB6AACA5-188F-429D-9B18-0A144B3250FE" sourceRef="signal_received" targetRef="sendTask"></sequenceFlow>
+    <sequenceFlow id="sid-4A48E0C8-FCA5-428A-909B-1F7DD29755D3" sourceRef="start" targetRef="signal_received"></sequenceFlow>
+    <startEvent id="start" name="Start"></startEvent>
+    <sequenceFlow id="sid-D8F77FC5-178B-40B8-9AAA-A9747C12A86A" sourceRef="sid-160518EE-14AB-4D61-9591-A40B46A4FC0C" targetRef="end"></sequenceFlow>
+    <textAnnotation id="sid-3760273E-13EE-4998-A98B-9E6AC54C618A">
+      <text>Sets process variable of device address</text>
+    </textAnnotation>
+    <association id="sid-2CEF0E16-FCF8-4494-9028-D61448285F02" sourceRef="signal_received" targetRef="sid-3760273E-13EE-4998-A98B-9E6AC54C618A" associationDirection="None"></association>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_fog-pong">
+    <bpmndi:BPMNPlane bpmnElement="fog-pong" id="BPMNPlane_fog-pong">
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="28.0" width="28.0" x="750.0" y="264.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-160518EE-14AB-4D61-9591-A40B46A4FC0C" id="BPMNShape_sid-160518EE-14AB-4D61-9591-A40B46A4FC0C">
+        <omgdc:Bounds height="30.0" width="30.0" x="630.0" y="263.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sendTask" id="BPMNShape_sendTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="435.0" y="238.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="signal_received" id="BPMNShape_signal_received">
+        <omgdc:Bounds height="30.0" width="30.0" x="315.0" y="263.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-3760273E-13EE-4998-A98B-9E6AC54C618A" id="BPMNShape_sid-3760273E-13EE-4998-A98B-9E6AC54C618A">
+        <omgdc:Bounds height="50.0" width="100.0" x="330.0" y="150.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-2CEF0E16-FCF8-4494-9028-D61448285F02" id="BPMNShape_sid-2CEF0E16-FCF8-4494-9028-D61448285F02">
+        <omgdc:Bounds height="63.00009244921077" width="0.6057701197039478" x="330.150239940148" y="199.37495377539463"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="start" id="BPMNShape_start">
+        <omgdc:Bounds height="30.0" width="30.0" x="210.0" y="263.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-D8F77FC5-178B-40B8-9AAA-A9747C12A86A" id="BPMNEdge_sid-D8F77FC5-178B-40B8-9AAA-A9747C12A86A">
+        <omgdi:waypoint x="659.9499987096394" y="278.0"></omgdi:waypoint>
+        <omgdi:waypoint x="750.0" y="278.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-4A48E0C8-FCA5-428A-909B-1F7DD29755D3" id="BPMNEdge_sid-4A48E0C8-FCA5-428A-909B-1F7DD29755D3">
+        <omgdi:waypoint x="239.9499983427931" y="278.0"></omgdi:waypoint>
+        <omgdi:waypoint x="315.0" y="278.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-69E9A1AD-43D5-45FE-9C94-88A627283C13" id="BPMNEdge_sid-69E9A1AD-43D5-45FE-9C94-88A627283C13">
+        <omgdi:waypoint x="534.9499999999695" y="278.0"></omgdi:waypoint>
+        <omgdi:waypoint x="630.0" y="278.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-FB6AACA5-188F-429D-9B18-0A144B3250FE" id="BPMNEdge_sid-FB6AACA5-188F-429D-9B18-0A144B3250FE">
+        <omgdi:waypoint x="344.9499992392744" y="278.0"></omgdi:waypoint>
+        <omgdi:waypoint x="435.0" y="278.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-2CEF0E16-FCF8-4494-9028-D61448285F02" id="BPMNEdge_sid-2CEF0E16-FCF8-4494-9028-D61448285F02">
+        <omgdi:waypoint x="330.14374347966367" y="263.00068037648805"></omgdi:waypoint>
+        <omgdi:waypoint x="330.75" y="199.95000000000002"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

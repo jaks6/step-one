@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <message id="msg_ping" name="Ping"></message>
+  <process id="demo_passive_pong" name="Passive Pong Process" isExecutable="true">
+    <startEvent id="start_event" name="Ping Received" isInterrupting="true">
+      <messageEventDefinition messageRef="msg_ping"></messageEventDefinition>
+    </startEvent>
+    <serviceTask id="send_pong_task" name="Send Pong" flowable:class="ee.mass.epm.sim.task.MessageTask" flowable:type="stepone_msg" flowable:triggerable="true">
+      <extensionElements>
+        <flowable:field name="msg_name">
+          <flowable:string><![CDATA[Pong]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="msg_destination">
+          <flowable:expression><![CDATA[${last_msg_source_address}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="msg_size">
+          <flowable:string><![CDATA[2]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="sid-8BF24C4A-E021-4464-A5BB-D1AE6DE522A4" sourceRef="start_event" targetRef="send_pong_task"></sequenceFlow>
+    <endEvent id="end_event" name="End"></endEvent>
+    <sequenceFlow id="sid-E031687E-AACB-4EF4-ACE3-D3878F056024" sourceRef="send_pong_task" targetRef="end_event"></sequenceFlow>
+    <textAnnotation id="sid-50FCA2BB-B058-4F49-91D9-CF2C3E903665">
+      <text>Attaches last_msg_source_address</text>
+    </textAnnotation>
+    <association id="sid-BBEBC7F1-A469-481A-A557-C8DFCB9C3027" sourceRef="start_event" targetRef="sid-50FCA2BB-B058-4F49-91D9-CF2C3E903665" associationDirection="None"></association>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_demo_passive_pong">
+    <bpmndi:BPMNPlane bpmnElement="demo_passive_pong" id="BPMNPlane_demo_passive_pong">
+      <bpmndi:BPMNShape bpmnElement="start_event" id="BPMNShape_start_event">
+        <omgdc:Bounds height="30.0" width="30.5" x="135.0" y="165.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="send_pong_task" id="BPMNShape_send_pong_task">
+        <omgdc:Bounds height="80.0" width="100.0" x="276.0" y="142.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="end_event" id="BPMNShape_end_event">
+        <omgdc:Bounds height="28.0" width="28.0" x="499.0" y="168.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-50FCA2BB-B058-4F49-91D9-CF2C3E903665" id="BPMNShape_sid-50FCA2BB-B058-4F49-91D9-CF2C3E903665">
+        <omgdc:Bounds height="20.0" width="218.0" x="100.25" y="76.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-BBEBC7F1-A469-481A-A557-C8DFCB9C3027" id="BPMNShape_sid-BBEBC7F1-A469-481A-A557-C8DFCB9C3027">
+        <omgdc:Bounds height="70.49276398738802" width="35.89605047535743" x="107.39033413732129" y="95.34111800630599"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-8BF24C4A-E021-4464-A5BB-D1AE6DE522A4" id="BPMNEdge_sid-8BF24C4A-E021-4464-A5BB-D1AE6DE522A4">
+        <omgdi:waypoint x="165.94889820106204" y="180.1760564926496"></omgdi:waypoint>
+        <omgdi:waypoint x="275.9999999999993" y="181.43019943019942"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-E031687E-AACB-4EF4-ACE3-D3878F056024" id="BPMNEdge_sid-E031687E-AACB-4EF4-ACE3-D3878F056024">
+        <omgdi:waypoint x="375.94999999987385" y="182.0"></omgdi:waypoint>
+        <omgdi:waypoint x="499.0" y="182.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-BBEBC7F1-A469-481A-A557-C8DFCB9C3027" id="BPMNEdge_sid-BBEBC7F1-A469-481A-A557-C8DFCB9C3027">
+        <omgdi:waypoint x="143.64697254189494" y="166.54066477619725"></omgdi:waypoint>
+        <omgdi:waypoint x="107.70038665254238" y="95.94999999999999"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

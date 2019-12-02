@@ -1,0 +1,29 @@
+
+plugins {
+    id 'idea'
+}
+
+
+
+allprojects {
+    repositories {
+        jcenter() 
+    }
+}
+
+
+
+
+subprojects {
+    version = '0.8a'
+
+
+
+
+}
+
+
+
+
+
+

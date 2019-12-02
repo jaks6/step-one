@@ -1,0 +1,94 @@
+Scenario.name = SPAM
+
+Scenario.endTime = 36000
+
+# World's size for Movement Models without implicit size (width, height; meters)
+MovementModel.worldSize = 10000, 10000
+MapBasedMovement.nrofMapFiles = 1
+MapBasedMovement.mapFile1 = spe/trt-alpha/cars.osm.wkt
+
+
+Scenario.nrofHostGroups = 2
+
+testInterface.type = SharedBandwidthInterface
+#testInterface.type = SimpleBroadcastInterface
+
+
+Group.router = DirectMultiTransferRouter
+#Group.router = DirectDeliveryRouter
+
+# Speed: 12Mbps
+testInterface.downloadSpeed = 1500k
+testInterface.uploadSpeed = 1500k
+testInterface.transmitSpeed = 1500k
+testInterface.transmitRange = 9999999999
+
+Group2.nrofInterfaces = 1
+Group1.nrofInterfaces = 1
+
+Group1.interface1 = testInterface
+Group2.interface1 = testInterface
+
+
+Group.bufferSize = 10G
+Group.waitTime = 0, 120
+
+
+Group1.nrofHosts = 2
+Group1.movementModel = StaticMovement
+Group.bufferSize = 1G
+Group.speed = 0,0
+
+Group1.staticLocationFile = spe/trt-scenario-alpha/servers-100-percent.wkt
+Group1.groupID = other
+
+
+
+Group2.nrofHosts = 1
+Group2.groupID = main
+Group2.movementModel = StationaryMovement
+Group2.nodeLocation = 1500,1500
+
+
+## GUI settings
+
+# GUI underlay image settings
+GUI.UnderlayImage.fileName = spe/trt-alpha/map.png
+# Image offset in pixels (x, y)
+GUI.UnderlayImage.offset = 108,98
+# Scaling factor for the image
+GUI.UnderlayImage.scale = 5
+# Image rotation (radians)
+GUI.UnderlayImage.rotate = 0.0
+
+
+# This configuration file adds Ping application for all the nodes and
+# a report module that counts the number of pings & pongs sent & received
+
+# Define new application
+pingApp.type = test.SpamApplication
+pingApp.interval = 65
+pingApp.destinationRange = 0,2
+pingApp.pingSize = 5
+pingApp.pongSize = 50M
+pingApp.passive = false
+
+pingAppPassive.type = PingApplication
+pingAppPassive.interval = 500
+pingAppPassive.destinationRange = 0,2
+pingAppPassive.pingSize = 512
+pingAppPassive.pongSize = 50M
+pingAppPassive.passive = true
+
+# Set Ping app for all nodes
+Group1.nrofApplications = 1
+Group2.nrofApplications = 1
+
+
+Group1.application1 = pingAppPassive
+Group2.application1 = pingApp
+
+# Add report for Ping app
+Report.nrofReports = 1
+Report.report1 = PingAppReporter
+

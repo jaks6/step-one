@@ -1,0 +1,54 @@
+Scenario.name = PingPong
+
+## 10 hours  + 1000s cooldown
+Scenario.endTime = 3600
+
+
+## ------------------------
+##   HOST GROUPS
+## ------------------------
+
+Scenario.nrofHostGroups = 2
+
+# Common settings for all groups
+#Group.router = DirectDeliveryRouter
+Group.bufferSize = 512M
+Group.waitTime = 15, 30
+# 30-40 km/h
+Group.speed = 8.33, 11.1
+
+# 1) CLOUD NODE GROUP
+Group1.nrofHosts = 1
+Group1.nodeLocation = 50,50
+Group1.groupID = A
+
+# 1) CLOUD NODE GROUP
+Group2.nrofHosts = 1
+Group2.nodeLocation = 100,100
+Group2.groupID = B
+
+
+## Default interfaces for all groups
+Group.nrofInterfaces = 1
+Group1.interface1 = wlanInterface
+Group2.interface1 = wlanInterface
+
+
+## ------------------------
+##   APPLICATIONS
+## ------------------------
+pingerProcessEngine.type = bpm.BpmEngineApplication
+pongerProcessEngine.type = bpm.BpmEngineApplication
+
+pingerProcessEngine.generateConnectionSignals = true
+
+Group.nrofApplications = 1
+
+Group1.application1 = pingerProcessEngine
+Group2.application1 = pongerProcessEngine
+
+pingerProcessEngine.autoDeployedProcesses = samples/pingpong/Ping_Pong_Process.bpmn20.xml
+pongerProcessEngine.autoDeployedProcesses = samples/pingpong/Passive_Pong_Process.bpmn20.xml
+
+
+

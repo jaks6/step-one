@@ -1,0 +1,43 @@
+plugins {
+    id "application"
+}
+apply plugin : "java"
+version 'unspecified'
+ext {
+    javaMainClass = "ee.mass.epm.stepone.StepOneSim"
+}
+
+application {
+    mainClassName = javaMainClass
+}
+
+task runWithJavaExec(type: JavaExec) {
+    group = "Execution"
+    description = "Run the main class with JavaExecTask"
+    classpath = sourceSets.main.runtimeClasspath
+    main = javaMainClass
+    //args 'spe/trt/settings.txt'
+}
+
+
+sourceSets {
+    main {
+        resources {
+            includes = ["**/default-settings.txt", "log4j.properties"]
+
+        }
+
+    }
+}
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    compile project(':the-one')
+    compile project(':sim-flowable')
+}

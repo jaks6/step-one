@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <signal id="signal_nearby_device" name="Device Nearby" flowable:scope="global"></signal>
+  <message id="msg_pong" name="pong"></message>
+  <process id="fog-ping" name="Fog Ping" isExecutable="true">
+    <documentation>Sends ping and waits for pong when device nearby</documentation>
+    <endEvent id="end" name="End"></endEvent>
+    <intermediateCatchEvent id="event_received_msg_pong" name="Received Pong">
+      <messageEventDefinition messageRef="msg_pong"></messageEventDefinition>
+    </intermediateCatchEvent>
+    <serviceTask id="sendTask" name="Send Ping" flowable:class="ee.mass.epm.sim.task.StartEventMessageTask" flowable:triggerable="true">
+      <extensionElements>
+        <flowable:field name="messageName">
+          <flowable:string><![CDATA[ping]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="destinationAddressVariable">
+          <flowable:string><![CDATA[sig_remote_address]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+    <startEvent id="nearby_device_startevent" name="Device Nearby" isInterrupting="true">
+      <signalEventDefinition signalRef="signal_nearby_device"></signalEventDefinition>
+    </startEvent>
+    <sequenceFlow id="flow2" sourceRef="sendTask" targetRef="event_received_msg_pong"></sequenceFlow>
+    <sequenceFlow id="flow3" sourceRef="event_received_msg_pong" targetRef="end"></sequenceFlow>
+    <sequenceFlow id="flow1" sourceRef="nearby_device_startevent" targetRef="sendTask"></sequenceFlow>
+    <textAnnotation id="annotation">
+      <text>Sets process variable of device address</text>
+    </textAnnotation>
+    <association id="attachment-line" sourceRef="nearby_device_startevent" targetRef="annotation" associationDirection="None"></association>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_fog-ping">
+    <bpmndi:BPMNPlane bpmnElement="fog-ping" id="BPMNPlane_fog-ping">
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="28.0" width="28.0" x="750.0" y="264.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="event_received_msg_pong" id="BPMNShape_event_received_msg_pong">
+        <omgdc:Bounds height="30.0" width="30.0" x="630.0" y="263.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sendTask" id="BPMNShape_sendTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="435.0" y="238.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="nearby_device_startevent" id="BPMNShape_nearby_device_startevent">
+        <omgdc:Bounds height="30.0" width="30.0" x="300.0" y="263.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="annotation" id="BPMNShape_annotation">
+        <omgdc:Bounds height="50.0" width="100.0" x="330.0" y="150.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="attachment-line" id="BPMNShape_attachment-line">
+        <omgdc:Bounds height="66.26302872040264" width="55.21919060033554" x="324.78080939966446" y="200.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="attachment-line" id="BPMNEdge_attachment-line">
+        <omgdi:waypoint x="324.57099508055836" y="266.47639484198066"></omgdi:waypoint>
+        <omgdi:waypoint x="380.0" y="200.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="329.9499993675608" y="278.0"></omgdi:waypoint>
+        <omgdi:waypoint x="435.0" y="278.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="534.9499999998419" y="278.0"></omgdi:waypoint>
+        <omgdi:waypoint x="630.0" y="278.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="659.9499987096394" y="278.0"></omgdi:waypoint>
+        <omgdi:waypoint x="750.0" y="278.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

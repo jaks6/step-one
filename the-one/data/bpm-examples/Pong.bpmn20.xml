@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <message id="msg_ping" name="ping"></message>
+  <process id="fog-react-pong" name="Reactive Pong" isExecutable="true">
+    <documentation>Starts when upon a ping message and responds with pong message</documentation>
+    <startEvent id="pingStart" name="Ping received" isInterrupting="true">
+      <messageEventDefinition messageRef="msg_ping"></messageEventDefinition>
+    </startEvent>
+    <serviceTask id="sendPong" name="Send Pong" flowable:class="ee.mass.epm.sim.task.MessageTask" flowable:triggerable="true">
+      <extensionElements>
+        <flowable:field name="messageName">
+          <flowable:string><![CDATA[pong]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="destinationAddressVariable">
+          <flowable:string><![CDATA[last_msg_source_address]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+    <endEvent id="endevent" name="End"></endEvent>
+    <sequenceFlow id="flow1" sourceRef="pingStart" targetRef="sendPong"></sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="sendPong" targetRef="endevent"></sequenceFlow>
+    <textAnnotation id="annotation_startevent">
+      <text>Sets var "last_message_source_address"</text>
+    </textAnnotation>
+    <association id="annotation_line" sourceRef="pingStart" targetRef="annotation_startevent" associationDirection="None"></association>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_fog-react-pong">
+    <bpmndi:BPMNPlane bpmnElement="fog-react-pong" id="BPMNPlane_fog-react-pong">
+      <bpmndi:BPMNShape bpmnElement="pingStart" id="BPMNShape_pingStart">
+        <omgdc:Bounds height="30.0" width="30.5" x="99.75" y="163.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sendPong" id="BPMNShape_sendPong">
+        <omgdc:Bounds height="80.0" width="100.0" x="180.0" y="138.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent" id="BPMNShape_endevent">
+        <omgdc:Bounds height="28.0" width="28.0" x="344.20001220703125" y="164.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="annotation_startevent" id="BPMNShape_annotation_startevent">
+        <omgdc:Bounds height="21.0" width="269.0" x="135.0" y="75.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="annotation_line" id="BPMNShape_annotation_line">
+        <omgdc:Bounds height="67.01995075378134" width="16.185188279324734" x="118.99099961033764" y="95.48924337310932"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="130.19999854787702" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="180.0" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="279.94999999998066" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="344.20001220703125" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="annotation_line" id="BPMNEdge_annotation_line">
+        <omgdi:waypoint x="118.76646687532694" y="163.39032723010806"></omgdi:waypoint>
+        <omgdi:waypoint x="135.0528411536806" y="95.94999999999999"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

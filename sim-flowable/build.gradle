@@ -1,0 +1,39 @@
+group 'ee.mass.flowable'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+
+
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'EPM Sim BPMN Engine (Flowable)',
+                'Implementation-Version': version,
+                'Main-Class': 'ee.ut.cs.mc.epm.Example'
+    }
+    baseName = project.name + '-all'
+
+    from sourceSets.main.allSource
+    from javadoc.destinationDir
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile (group: 'org.flowable', name: 'flowable-engine', version: '6.4.2'){
+        exclude group: 'org.flowable', module: 'flowable-process-validation'
+    }
+    compile files('./lib/flowable-process-validation-6.5.0-SNAPSHOT.jar')
+
+    compile project(':the-one')
+
+
+    compile group: 'com.h2database', name: 'h2', version: '1.3.176'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}

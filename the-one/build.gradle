@@ -1,0 +1,46 @@
+group 'ee.mass.stepone'
+apply plugin: 'idea'
+
+apply plugin: 'java'
+
+
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ["src"]
+            includes = ["**/*.gif"]
+        }
+        java {
+            srcDirs = ['src']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test']
+        }
+    }
+}
+
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+
+
+repositories {
+    mavenCentral()
+}
+ 
+dependencies {
+    compile 'junit:junit:4.11'
+
+    compile fileTree(include: ['*.jar'], dir: 'lib')
+
+    compile 'org.apache.commons:commons-lang3:3.9'
+    compile 'org.slf4j:slf4j-api:1.7.26'
+    
+    compile 'org.apache.logging.log4j:log4j:2.11.2'
+}
+
+
