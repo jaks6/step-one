@@ -7,4 +7,25 @@ org.gradle.java.home=/usr/lib/jvm/java-1.8.0-openjdk-amd64/
 
 Run sample with:
 
-gradlew run --args samples/pingpong/settings.txt
+    gradlew run --args samples/pingpong/settings.txt
+
+
+
+
+## Step-ONE modeller:
+Install Docker + Docker Compose
+
+Get the Step ONE Flowable Modeller:
+http://kodu.ut.ee/~jaks/public/step-one/step1-modeler-docker.zip 
+
+Unpack the archive, and in folder with docker-compose.yml, run
+    docker-compose up
+
+After the web-app service has finished initializing, you can open the modeler at:
+http://localhost:8888/flowable-modeler
+
+## Publications
+
+Please cite the work as:
+
+J. Mass, S. N. Srirama, C. Chang: STEP-ONE: Simulated Testbed for Edge-Fog Processes based on the Opportunistic Network Environment Simulator, Journal of Systems and Software, ISSN: 0164-1212, 2020. Elsevier. (Accepted for publication) 
