@@ -16,7 +16,7 @@ public class StartEventMessageTask extends MessageTask {
 
         msgContent.isForStartEvent = true;
 
-        msgContent.variables.put(this.msg_name + "_execution_id", execution.getId()); // TODO: maybe move to engine-middleware level instead of this task impl.
+        msgContent.variables.put(this.msg_name.getValue(execution) + "_execution_id", execution.getId()); // TODO: maybe move to engine-middleware level instead of this task impl.
 
         if (included_vars != null) {
             String[] varNames = included_vars.getExpressionText().split(MessageTask.INCLUDED_PROCESS_VARS_DELIMITER);

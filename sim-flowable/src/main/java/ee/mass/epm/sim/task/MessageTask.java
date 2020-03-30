@@ -33,7 +33,7 @@ public class MessageTask extends AbstractMessageTask {
             e.printStackTrace();
         }
 
-        msgContent.variables.put(this.msg_name + "_execution_id", execution.getId()); // TODO: maybe move to engine-middleware level instead of this task impl.
+        msgContent.variables.put(this.msg_name.getValue(execution) + "_execution_id", execution.getId()); // TODO: maybe move to engine-middleware level instead of this task impl.
 
         if (included_vars != null) {
             String expressionText = included_vars.getExpressionText();
