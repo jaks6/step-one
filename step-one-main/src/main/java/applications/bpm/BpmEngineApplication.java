@@ -245,6 +245,7 @@ public class BpmEngineApplication extends Application  {
         this.AUTO_STARTED_PROCESSES = e.AUTO_STARTED_PROCESSES;
         this.AUTOSTARTED_PROCESS_VARS = e.AUTOSTARTED_PROCESS_VARS;
         this.movementTrackingEnabled = e.movementTrackingEnabled;
+        this.cpuConf = e.cpuConf;
         this.engine = new Engine( OneSimClock.getInstance(), e.cpuConf);
     }
 
