@@ -40,6 +40,11 @@ public class BpmEngineApplication extends Application  {
     private static final String SETTING_TRACK_CONNECTIONS = "generateConnectionSignals";
     private static final String SETTING_NO_OF_CPUS = "noOfCpus";
     private static final String SETTING_CPU_SPEED = "cpuSpeed";
+
+    private static final String SETTING_CPU_COST_PER_TIMEUNIT = "cpuCostPerTimeUnit";
+    private static final String SETTING_CPU_COST_TIMEUNIT = "cpuCostTimeUnit";
+    private static final String SETTING_BANDWIDTH_COSTS_PER_MB = "networkInterfacesCostsPerMb";
+
     private HashMap<String, Object>[] AUTOSTARTED_PROCESS_VARS;
     private String[] AUTO_STARTED_PROCESSES  = new String[]{};
     private String[] AUTO_DEPLOYED_PROCESSES = new String[]{};
@@ -75,6 +80,7 @@ public class BpmEngineApplication extends Application  {
 
     private CpuConf cpuConf;
     SimulationApplicationEngine engine;
+    private CostHelper costHelper = new CostHelper();
     boolean firstUpdate = true;
     DTNHost mHost;
     private boolean energyTrackingEnabled;
@@ -303,6 +309,7 @@ public class BpmEngineApplication extends Application  {
         firstUpdate = false;
         mHost = host;
 
+        costHelper.init(mHost);
         //initialize the singleton connection listener, so that bpm engines can get signals about new connections
         if (connectionSignalsEnabled){
             NewConnectionListener.getInstance();
@@ -507,6 +514,15 @@ public class BpmEngineApplication extends Application  {
                 .getApplications(BpmEngineApplication.APP_ID).iterator().next();
         return bpmApp;
 
+    }
+
+
+    public CostHelper getCostHelper() {
+        return costHelper;
+    }
+
+    public CpuConf getCpuConf() {
+        return cpuConf;
     }
 }
 
