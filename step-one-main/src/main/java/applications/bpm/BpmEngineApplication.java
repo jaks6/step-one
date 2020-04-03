@@ -178,19 +178,30 @@ public class BpmEngineApplication extends Application  {
             OVERRIDE_MSG_SIZE = s.getInt(SETTING_OVERRIDE_MSG_SIZE);
         }
 
-        if (s.contains(SETTING_TRACK_MOVEMENT)){
-            movementTrackingEnabled = s.getBoolean(SETTING_TRACK_MOVEMENT, true);
-        }
-        if (s.contains(SETTING_TRACK_CONNECTIONS)){
-            connectionSignalsEnabled = s.getBoolean(SETTING_TRACK_CONNECTIONS, true);
-        }
+        movementTrackingEnabled = s.getBoolean(SETTING_TRACK_MOVEMENT, true);
+        connectionSignalsEnabled = s.getBoolean(SETTING_TRACK_CONNECTIONS, true);
 
         if (s.contains(SETTING_NO_OF_CPUS) && s.contains(SETTING_CPU_SPEED)){
             this.cpuConf = new CpuConf(
                     s.getInt(SETTING_CPU_SPEED),
                     s.getInt(SETTING_NO_OF_CPUS));
         } else {
-            log.error("Both no. of cpus and cpu_speed must be specified!");
+            log.info("Using default CPU configuration, as both no. of cpus and cpu_speed were not specified!");
+            this.cpuConf = new CpuConf();
+        }
+
+        if (s.contains(SETTING_CPU_COST_PER_TIMEUNIT) || s.contains(SETTING_CPU_COST_TIMEUNIT) ){
+            if ( s.contains(SETTING_CPU_COST_PER_TIMEUNIT) && s.contains(SETTING_CPU_COST_TIMEUNIT)) {
+                costHelper.setCpuCost(s.getSetting(SETTING_CPU_COST_TIMEUNIT), s.getDouble(SETTING_CPU_COST_PER_TIMEUNIT));
+            } else {
+                log.error("Only one of cpuCostPerTimeUnit and cpuCostTimeUnit must be specified! Both must be specified.");
+            }
+        }
+
+
+
+        if (s.contains(SETTING_BANDWIDTH_COSTS_PER_MB)){
+            costHelper.setCpuCost(s.getCsvDoubles(SETTING_BANDWIDTH_COSTS_PER_MB));
         }
 
         if (s.contains(SETTING_AUTODEPLOYED_PROCESSES))
