@@ -44,9 +44,7 @@ public class BpmMessageListener implements MessageListener {
 
         if (simMsg!= null && simMsg.notifySourceOfDelivery){
 
-            ((BpmEngineApplication) from.getRouter()
-                    .getApplications(BpmEngineApplication.APP_ID).iterator().next())
-                    .getEngine().notifyMessageTransferred(simMsg);
+            BpmEngineApplication.ofHost(from).getEngine().notifyMessageTransferred(simMsg);
             //from.deleteMessage(msg.getId(), false); //TODO: this may cause problems with routing/relaying
         }
     }

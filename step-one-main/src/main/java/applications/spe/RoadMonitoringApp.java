@@ -199,11 +199,9 @@ public class RoadMonitoringApp extends Application implements ApplicationListene
         populateRepositories();
 
 
-        Application application = host.getRouter().getApplications(BpmEngineApplication.APP_ID)
-                .stream().findFirst().orElse(null);
+        bpmEngineApp = BpmEngineApplication.ofHost(host);
 
-        if (application != null){
-            bpmEngineApp = (BpmEngineApplication) application;
+        if (bpmEngineApp != null){
             bpmEngineApp.getAppListeners().add(this);
         }
 

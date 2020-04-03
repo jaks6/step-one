@@ -493,6 +493,20 @@ public class BpmEngineApplication extends Application  {
     public boolean connectionSignalsEnabled() {
         return connectionSignalsEnabled;
     }
+
+
+    /**
+     * Try to obtain a given hosts instance of BPM engine.
+     * @param host
+     * @return BpmEngineApplication instance of the host, or null if the host
+     *   doesn't have this application
+     */
+    public static BpmEngineApplication ofHost (DTNHost host) {
+        BpmEngineApplication bpmApp = (BpmEngineApplication) host.getRouter()
+                .getApplications(BpmEngineApplication.APP_ID).iterator().next();
+        return bpmApp;
+
+    }
 }
 
 

@@ -69,9 +69,9 @@ public class ProcessInfoWindow extends JFrame implements ActionListener {
 
         // TODO Null pointer danger
         BpmInfo ri = null;
-        Object[] engines = host.getRouter().getApplications(BpmEngineApplication.APP_ID).toArray();
-        if (engines.length > 0){
-            ri = ((BpmEngineApplication)engines[0]).getBpmInfo();
+        BpmEngineApplication engine = BpmEngineApplication.ofHost(host);
+        if (engine != null){
+            ri = engine.getBpmInfo();
         }
 
         DefaultMutableTreeNode top = new DefaultMutableTreeNode(ri);
