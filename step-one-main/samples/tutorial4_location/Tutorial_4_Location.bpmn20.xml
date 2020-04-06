@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <signal id="coordinateSignal" name="New Coordinate" flowable:scope="global"></signal>
+  <signal id="newConnectionSignal" name="Device Nearby" flowable:scope="global"></signal>
+  <process id="tutorial4_location" name="Tutorial 4 Location" isExecutable="true">
+    <startEvent id="startEvent1" name="Start" flowable:formFieldValidation="true"></startEvent>
+    <sequenceFlow id="sid-BC42C540-F1A4-422B-9FC1-22D09698DB33" sourceRef="startEvent1" targetRef="coordinateSignalCatch"></sequenceFlow>
+    <intermediateCatchEvent id="coordinateSignalCatch" name="Coordinate Reached">
+      <extensionElements>
+        <flowable:executionListener event="start" class="ee.mass.epm.sim.LocationSignalExecutionListener">
+          <flowable:field name="coordinate">
+            <flowable:string><![CDATA[150,200]]></flowable:string>
+          </flowable:field>
+        </flowable:executionListener>
+      </extensionElements>
+      <signalEventDefinition signalRef="coordinateSignal"></signalEventDefinition>
+    </intermediateCatchEvent>
+    <endEvent id="sid-7D51845D-9B95-4D6A-971F-E22A2A85A714" name="End"></endEvent>
+    <serviceTask id="sensorTask" name="Collect Sensor Data" flowable:class="ee.mass.epm.samples.SensorReadTask" flowable:type="stepone_work" flowable:triggerable="true">
+      <extensionElements>
+        <flowable:field name="work_size">
+          <flowable:string><![CDATA[30000]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="sid-46F35215-4176-43DE-A629-560AB01EBBD6" sourceRef="coordinateSignalCatch" targetRef="sensorTask"></sequenceFlow>
+    <intermediateCatchEvent id="newConnectionSignalCatch" name="New Connection">
+      <signalEventDefinition signalRef="newConnectionSignal"></signalEventDefinition>
+    </intermediateCatchEvent>
+    <sequenceFlow id="sid-759CE2D3-F014-4284-8BD7-F8B955DA9F84" sourceRef="newConnectionSignalCatch" targetRef="sendDataTask"></sequenceFlow>
+    <serviceTask id="sendDataTask" name="Send Sensor Data" flowable:class="ee.mass.epm.sim.task.MessageTask" flowable:type="stepone_msg" flowable:triggerable="true">
+      <extensionElements>
+        <flowable:field name="msg_name">
+          <flowable:string><![CDATA[Sensor Data]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="msg_destination">
+          <flowable:expression><![CDATA[${sig_remote_address}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="msg_size">
+          <flowable:string><![CDATA[512]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="included_vars">
+          <flowable:string><![CDATA[sensorValue]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="sid-9672636F-1604-4412-AB42-63F8CE4C1597" sourceRef="sendDataTask" targetRef="sid-7D51845D-9B95-4D6A-971F-E22A2A85A714"></sequenceFlow>
+    <sequenceFlow id="sid-AAA05BBD-056D-4DEF-9E7F-C66C3D004095" sourceRef="sensorTask" targetRef="newConnectionSignalCatch"></sequenceFlow>
+    <textAnnotation id="sid-09D02453-5BDC-4F25-A7AE-B434985F7940">
+      <text>sets variable 'sensorValue' from custom Java implementation</text>
+    </textAnnotation>
+    <association id="sid-A01C842B-B445-47ED-98B1-A5B82FE4BACC" sourceRef="sensorTask" targetRef="sid-09D02453-5BDC-4F25-A7AE-B434985F7940" associationDirection="None"></association>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_tutorial4_location">
+    <bpmndi:BPMNPlane bpmnElement="tutorial4_location" id="BPMNPlane_tutorial4_location">
+      <bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1">
+        <omgdc:Bounds height="30.0" width="30.0" x="120.0" y="163.25"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="coordinateSignalCatch" id="BPMNShape_coordinateSignalCatch">
+        <omgdc:Bounds height="30.0" width="30.0" x="210.0" y="163.25"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-7D51845D-9B95-4D6A-971F-E22A2A85A714" id="BPMNShape_sid-7D51845D-9B95-4D6A-971F-E22A2A85A714">
+        <omgdc:Bounds height="28.0" width="28.0" x="795.0" y="165.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sensorTask" id="BPMNShape_sensorTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="330.0" y="138.25"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="newConnectionSignalCatch" id="BPMNShape_newConnectionSignalCatch">
+        <omgdc:Bounds height="30.0" width="30.0" x="480.0" y="163.25"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sendDataTask" id="BPMNShape_sendDataTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="570.0" y="138.25"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-09D02453-5BDC-4F25-A7AE-B434985F7940" id="BPMNShape_sid-09D02453-5BDC-4F25-A7AE-B434985F7940">
+        <omgdc:Bounds height="66.0" width="239.0" x="345.0" y="30.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-A01C842B-B445-47ED-98B1-A5B82FE4BACC" id="BPMNShape_sid-A01C842B-B445-47ED-98B1-A5B82FE4BACC">
+        <omgdc:Bounds height="42.698398154167094" width="11.944709306059792" x="356.8309656594701" y="95.42833998541646"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-AAA05BBD-056D-4DEF-9E7F-C66C3D004095" id="BPMNEdge_sid-AAA05BBD-056D-4DEF-9E7F-C66C3D004095">
+        <omgdi:waypoint x="429.94999999999914" y="178.57206778460085"></omgdi:waypoint>
+        <omgdi:waypoint x="480.00010683165306" y="178.8947824160121"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-A01C842B-B445-47ED-98B1-A5B82FE4BACC" id="BPMNEdge_sid-A01C842B-B445-47ED-98B1-A5B82FE4BACC">
+        <omgdi:waypoint x="368.81015698721797" y="138.25"></omgdi:waypoint>
+        <omgdi:waypoint x="356.976898001201" y="95.95"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-BC42C540-F1A4-422B-9FC1-22D09698DB33" id="BPMNEdge_sid-BC42C540-F1A4-422B-9FC1-22D09698DB33">
+        <omgdi:waypoint x="149.9494337658439" y="178.3733036277378"></omgdi:waypoint>
+        <omgdi:waypoint x="210.0002293963976" y="178.86860286198942"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-46F35215-4176-43DE-A629-560AB01EBBD6" id="BPMNEdge_sid-46F35215-4176-43DE-A629-560AB01EBBD6">
+        <omgdi:waypoint x="239.93874645502245" y="177.66257691008062"></omgdi:waypoint>
+        <omgdi:waypoint x="329.99999999999966" y="174.13298122633145"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-759CE2D3-F014-4284-8BD7-F8B955DA9F84" id="BPMNEdge_sid-759CE2D3-F014-4284-8BD7-F8B955DA9F84">
+        <omgdi:waypoint x="509.94999883049303" y="178.25"></omgdi:waypoint>
+        <omgdi:waypoint x="570.0" y="178.25"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-9672636F-1604-4412-AB42-63F8CE4C1597" id="BPMNEdge_sid-9672636F-1604-4412-AB42-63F8CE4C1597">
+        <omgdi:waypoint x="669.9499999999965" y="178.44821428571427"></omgdi:waypoint>
+        <omgdi:waypoint x="795.0000031245381" y="178.94444487291733"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

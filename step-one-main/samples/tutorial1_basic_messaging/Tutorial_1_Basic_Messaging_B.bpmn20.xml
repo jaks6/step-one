@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <message id="helloMsg" name="Hello"></message>
+  <process id="tutorial1_b" name="Tutorial 1 Basic Messaging B" isExecutable="true">
+    <serviceTask id="responseMsgTask" name="Send Response" flowable:class="ee.mass.epm.sim.task.MessageTask" flowable:type="stepone_msg" flowable:triggerable="true">
+      <extensionElements>
+        <flowable:field name="msg_name">
+          <flowable:string><![CDATA[Response]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="msg_destination">
+          <flowable:expression><![CDATA[${last_msg_source_address}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="msg_size">
+          <flowable:string><![CDATA[100]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="sid-E5D3CBC1-7BF6-4CC4-B50D-CAE5405E0BC0" sourceRef="sid-14302D24-4A57-4B49-BFBD-C6F3D0FB64C6" targetRef="responseMsgTask"></sequenceFlow>
+    <endEvent id="endEvent"></endEvent>
+    <sequenceFlow id="sid-F6F03480-95EB-45B2-BC4D-55B101ABE190" sourceRef="responseMsgTask" targetRef="endEvent"></sequenceFlow>
+    <startEvent id="sid-E85CB6E0-B80E-4FB4-A36D-62685A8C0697" flowable:formFieldValidation="true"></startEvent>
+    <intermediateCatchEvent id="sid-14302D24-4A57-4B49-BFBD-C6F3D0FB64C6" name="'Hello' 
+message Received">
+      <messageEventDefinition messageRef="helloMsg"></messageEventDefinition>
+    </intermediateCatchEvent>
+    <sequenceFlow id="sid-008CCBF4-4B64-4DED-BBCA-E75B14C5B9BA" sourceRef="sid-E85CB6E0-B80E-4FB4-A36D-62685A8C0697" targetRef="sid-14302D24-4A57-4B49-BFBD-C6F3D0FB64C6"></sequenceFlow>
+    <textAnnotation id="sid-04912567-2CE0-476A-9274-ACDAA208F4B4">
+      <text>sets last_msg_source_address</text>
+    </textAnnotation>
+    <association id="sid-57F9BC90-CC82-46C3-AD6F-29F62B6EF62B" sourceRef="sid-14302D24-4A57-4B49-BFBD-C6F3D0FB64C6" targetRef="sid-04912567-2CE0-476A-9274-ACDAA208F4B4" associationDirection="None"></association>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_tutorial1_b">
+    <bpmndi:BPMNPlane bpmnElement="tutorial1_b" id="BPMNPlane_tutorial1_b">
+      <bpmndi:BPMNShape bpmnElement="responseMsgTask" id="BPMNShape_responseMsgTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="225.0" y="125.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endEvent" id="BPMNShape_endEvent">
+        <omgdc:Bounds height="28.0" width="28.0" x="449.0" y="151.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-04912567-2CE0-476A-9274-ACDAA208F4B4" id="BPMNShape_sid-04912567-2CE0-476A-9274-ACDAA208F4B4">
+        <omgdc:Bounds height="52.0" width="246.0" x="101.0" y="53.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-E85CB6E0-B80E-4FB4-A36D-62685A8C0697" id="BPMNShape_sid-E85CB6E0-B80E-4FB4-A36D-62685A8C0697">
+        <omgdc:Bounds height="30.0" width="30.0" x="30.0" y="150.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-14302D24-4A57-4B49-BFBD-C6F3D0FB64C6" id="BPMNShape_sid-14302D24-4A57-4B49-BFBD-C6F3D0FB64C6">
+        <omgdc:Bounds height="30.0" width="30.0" x="120.0" y="150.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-57F9BC90-CC82-46C3-AD6F-29F62B6EF62B" id="BPMNShape_sid-57F9BC90-CC82-46C3-AD6F-29F62B6EF62B">
+        <omgdc:Bounds height="45.719644823681136" width="16.567067988728212" x="113.1641222556359" y="104.74017758815944"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-008CCBF4-4B64-4DED-BBCA-E75B14C5B9BA" id="BPMNEdge_sid-008CCBF4-4B64-4DED-BBCA-E75B14C5B9BA">
+        <omgdi:waypoint x="59.94999774472233" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="120.0" y="165.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-57F9BC90-CC82-46C3-AD6F-29F62B6EF62B" id="BPMNEdge_sid-57F9BC90-CC82-46C3-AD6F-29F62B6EF62B">
+        <omgdi:waypoint x="129.88833451191692" y="150.89184263280333"></omgdi:waypoint>
+        <omgdi:waypoint x="113.24015395220587" y="104.94999999999999"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-E5D3CBC1-7BF6-4CC4-B50D-CAE5405E0BC0" id="BPMNEdge_sid-E5D3CBC1-7BF6-4CC4-B50D-CAE5405E0BC0">
+        <omgdi:waypoint x="149.9499990675947" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="225.0" y="165.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-F6F03480-95EB-45B2-BC4D-55B101ABE190" id="BPMNEdge_sid-F6F03480-95EB-45B2-BC4D-55B101ABE190">
+        <omgdi:waypoint x="324.94999999988653" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="449.0" y="165.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

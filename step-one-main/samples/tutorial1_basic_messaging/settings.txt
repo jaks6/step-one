@@ -1,0 +1,10 @@
+Scenario.name = Tutorial1_BasicMessaging
+
+
+processEngineApp1.autoDeployedProcesses = samples/tutorial1_basic_messaging/Tutorial_1_Basic_Messaging_A.bpmn20.xml
+processEngineApp2.autoDeployedProcesses = samples/tutorial1_basic_messaging/Tutorial_1_Basic_Messaging_B.bpmn20.xml
+
+processEngineApp1.autoStartedProcessKeys = tutorial1_a
+processEngineApp1.autoStartedProcessVars = messageContent="Hello World!"
+
+processEngineApp2.autoStartedProcessKeys = tutorial1_b

@@ -1,0 +1,11 @@
+Scenario.name = Tutorial2_Offloading
+
+
+processEngineApp1.autoDeployedProcesses = samples/tutorial2_offloading/Tutorial_2_Simple_Offloading.bpmn20.xml
+#processEngineApp2.autoDeployedProcesses = samples/tutorial2_offloading/Tutorial_1_Hello_B.bpmn20.xml
+
+#this should be processed within 3 timesteps
+processEngineApp1.autoStartedProcessKeys = tutorial2_simple_offload
+processEngineApp1.autoStartedProcessVars = workSize=30000
+
+

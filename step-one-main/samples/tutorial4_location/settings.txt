@@ -1,0 +1,37 @@
+Scenario.name = Tutorial4_Location
+
+Scenario.nrofHostGroups = 2
+
+Group1.nrofHosts = 1
+Group2.nrofHosts = 3
+
+
+Group1.groupID = M
+Group2.groupID = S
+
+# Group 1 will move on a line
+Group1.movementModel = LinearMovement
+Group1.LinearMovement.startLocation = 50,200
+Group1.LinearMovement.endLocation = 350,200
+
+# Set linearmovement to move from one end of the line to the other (e.g. instead of random point on line).
+# See 'LinearMovement' class for more documentation
+Group1.LinearMovement.initLocType = 1
+Group1.LinearMovement.targetType = 1
+
+
+# Group2 will have static positions on a line
+Group2.movementModel = LinearFormation
+Group2.LinearFormation.startLocation = 200,210
+Group2.LinearFormation.endLocation = 300,210
+
+
+
+# Movement speed range:
+Group.speed = 0.3, 0.5
+
+
+
+processEngineApp1.autoDeployedProcesses = samples/tutorial4_location/Tutorial_4_Location.bpmn20.xml
+processEngineApp1.autoStartedProcessKeys = tutorial4_location
+

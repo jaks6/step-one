@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <message id="responseMessage" name="Response"></message>
+  <process id="tutorial1_a" name="Tutorial 1 Basic Messaging A" isExecutable="true">
+    <startEvent id="start" name="Start" flowable:formFieldValidation="true"></startEvent>
+    <serviceTask id="sendMessageTask" name="Send &quot;Hello&quot;" flowable:class="ee.mass.epm.sim.task.MessageTask" flowable:type="stepone_msg" flowable:triggerable="true">
+      <extensionElements>
+        <flowable:field name="msg_name">
+          <flowable:string><![CDATA[Hello]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="msg_destination">
+          <flowable:string><![CDATA[1]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="msg_size">
+          <flowable:string><![CDATA[100]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="included_vars">
+          <flowable:string><![CDATA[messageContent]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+    <endEvent id="end" name="End"></endEvent>
+    <sequenceFlow id="f1" sourceRef="start" targetRef="sendMessageTask"></sequenceFlow>
+    <sequenceFlow id="f3" sourceRef="responseMessageCatch" targetRef="end"></sequenceFlow>
+    <sequenceFlow id="f2" sourceRef="sendMessageTask" targetRef="responseMessageCatch"></sequenceFlow>
+    <intermediateCatchEvent id="responseMessageCatch" name="Response Message Received">
+      <messageEventDefinition messageRef="responseMessage"></messageEventDefinition>
+    </intermediateCatchEvent>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_tutorial1_a">
+    <bpmndi:BPMNPlane bpmnElement="tutorial1_a" id="BPMNPlane_tutorial1_a">
+      <bpmndi:BPMNShape bpmnElement="start" id="BPMNShape_start">
+        <omgdc:Bounds height="30.0" width="30.0" x="100.0" y="163.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sendMessageTask" id="BPMNShape_sendMessageTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="240.0" y="138.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="28.0" width="28.0" x="619.0" y="164.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="responseMessageCatch" id="BPMNShape_responseMessageCatch">
+        <omgdc:Bounds height="30.0" width="30.0" x="450.0" y="163.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="f1" id="BPMNEdge_f1">
+        <omgdi:waypoint x="129.94999940317362" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="239.99999999993753" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="f2" id="BPMNEdge_f2">
+        <omgdi:waypoint x="339.94999999992734" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="450.0" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="f3" id="BPMNEdge_f3">
+        <omgdi:waypoint x="479.9499993524177" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="619.0" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
