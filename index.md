@@ -12,9 +12,18 @@ The below tutorials walk you through how to create process-oriented scenarios wi
 * [https://flowable.com/open-source/docs/]( https://flowable.com/open-source/docs/ ) 
 * [http://akeranen.github.io/the-one/](http://akeranen.github.io/the-one/ ) 
 
-## Configuring STEP-ONE simulations
+## Running & Configuring STEP-ONE simulations
+
+STEP-ONE scenarios can be run with Gradle, providing as argument the settings file to use:
+
+```
+./gradlew run --args samples/tutorial1_basic_messaging/settings.txt
+```
+
+
+
 <ul>
-	<li><a href="{{ site.baseurl }}{% link _posts/2020-04-06-configuration.md %}">Configuring 		STEP-ONE simulations</a></li>
+	<li><a href="{{ site.baseurl }}{% link _posts/2020-04-06-configuration.md %}">Configuring STEP-ONE simulation settings files</a></li>
 </ul>
 ## Tutorials
 
