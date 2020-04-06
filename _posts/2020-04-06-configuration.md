@@ -1,7 +1,7 @@
 ---
 layout: paginated_post
 title:  "Configuring STEP-ONE"
-date:   2020-04-06 11:35:32 +0300
+date:   2020-04-06 11:00:00 +0300
 categories: other
 ---
 # ONE Settings files
