@@ -10,7 +10,7 @@ Welcome to the documentation and tutorials page of STEP-ONE!
 ## Tutorials
 
   <ul>
-  	{% assign sorted = site.categories["tutorial"] | sort: 'date' | reverse  %}
+  	{% assign sorted = site.categories["tutorial"] | sort: 'date'  %}
     {% for post in sorted %}
       <li><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></li>
     {% endfor %}

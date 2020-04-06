@@ -18,6 +18,7 @@
     <meta name="theme-color" content="#157878">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/css/paginated.css' | relative_url }}">
   </head>
   <body>
     <!-- <a id="skip-to-content" href="#content">Skip to the content.</a>-->
@@ -45,6 +46,17 @@
 	</div>
 	<hr>
       {{ content }}
+      
+      
+      <hr>
+      <div class="Previous-next">
+	  {% if page.previous.url %}
+		<a class="previous" href="{{page.previous.url}}">&laquo; {{page.previous.title}}</a>
+	  {% endif %}
+	  {% if page.next.url %}
+		<a class="next" href="{{page.next.url}}">{{page.next.title}} &raquo;</a>
+	  {% endif %}
+	</div>
       
 
       <footer class="site-footer">
