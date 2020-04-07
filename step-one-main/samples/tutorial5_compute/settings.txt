@@ -1,0 +1,63 @@
+Scenario.name = Tutorial5_Compute
+
+Scenario.nrofHostGroups = 3
+
+Group1.nrofHosts = 1
+Group2.nrofHosts = 2
+Group3.nrofHosts = 2
+
+
+Group1.groupID = M
+Group2.groupID = X
+Group3.groupID = Y
+
+# Group 1 will move on a line
+Group1.movementModel = LinearMovement
+Group1.LinearMovement.startLocation = 50,200
+Group1.LinearMovement.endLocation = 450,200
+
+# Set linearmovement to move from one end of the line to the other (e.g. instead of random point on line).
+# See 'LinearMovement' class for more documentation
+Group1.LinearMovement.initLocType = 1
+Group1.LinearMovement.targetType = 1
+
+# Movement speed range:
+Group.speed = 0.3, 0.5
+
+
+# Group2 and 3 will have static positions on a line
+Group2.movementModel = LinearFormation
+Group3.movementModel = LinearFormation
+
+Group2.LinearFormation.startLocation = 150,210
+Group2.LinearFormation.endLocation = 300,210
+
+Group3.LinearFormation.startLocation = 300,210
+Group3.LinearFormation.endLocation = 450,210
+
+
+processEngineAppMobile.type = bpm.BpmEngineApplication
+processEngineAppX.type = bpm.BpmEngineApplication
+processEngineAppY.type = bpm.BpmEngineApplication
+
+Group.nrofApplications = 1
+Group1.application1 = processEngineAppMobile
+Group2.application1 = processEngineAppX
+Group3.application1 = processEngineAppY
+
+
+## CPU Conf
+processEngineAppX.noOfCpus = 2
+processEngineAppX.cpuSpeed = 20000
+
+processEngineAppY.noOfCpus = 4
+processEngineAppY.cpuSpeed = 31500
+
+
+processEngineAppMobile.autoDeployedProcesses = samples/tutorial5_compute/Tutorial_5_Compute_Client.bpmn20.xml
+processEngineAppMobile.autoStartedProcessKeys = tutorial5_compute_client
+
+processEngineAppX.autoDeployedProcesses = samples/tutorial5_compute/Tutorial_5_Compute_Server.bpmn20.xml
+processEngineAppY.autoDeployedProcesses = samples/tutorial5_compute/Tutorial_5_Compute_Server.bpmn20.xml
+
+

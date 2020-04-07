@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <message id="msgHardwareDescription" name="Get hardware description"></message>
+  <process id="tutorial5_compute_server" name="Tutorial 5 Compute Server" isExecutable="true">
+    <startEvent id="sid-64469F0E-7F8B-4C1E-A8ED-548EEAA85D19" name="HW Description
+Requested" isInterrupting="true">
+      <messageEventDefinition messageRef="msgHardwareDescription"></messageEventDefinition>
+    </startEvent>
+    <sequenceFlow id="sid-34654C74-F351-4842-AAC7-8B57EA58AAE4" sourceRef="sid-64469F0E-7F8B-4C1E-A8ED-548EEAA85D19" targetRef="checkHardwareTask"></sequenceFlow>
+    <serviceTask id="checkHardwareTask" name="Check HW" flowable:class="ee.mass.epm.samples.CheckHardwareTask" flowable:type="stepone_work" flowable:triggerable="true">
+      <extensionElements>
+        <flowable:field name="work_size">
+          <flowable:string><![CDATA[10]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="sid-1144AB4E-5CA0-4486-A5BB-A83BE0AE7AA3" sourceRef="checkHardwareTask" targetRef="sendDescriptionTask"></sequenceFlow>
+    <serviceTask id="sendDescriptionTask" name="Send HW description" flowable:class="ee.mass.epm.sim.task.MessageTask" flowable:type="stepone_msg" flowable:triggerable="true">
+      <extensionElements>
+        <flowable:field name="msg_name">
+          <flowable:string><![CDATA[Hardware Description]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="msg_destination">
+          <flowable:expression><![CDATA[${startMessageSenderAddress}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="msg_size">
+          <flowable:string><![CDATA[1024]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="included_vars">
+          <flowable:string><![CDATA[noOfCpus,cpuSpeed]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+    <endEvent id="sid-8FDFDC79-A81F-4087-A3EB-E0C030C16F1E"></endEvent>
+    <sequenceFlow id="sid-F1486312-EC7E-461C-A74F-85D4B8999F20" sourceRef="sendDescriptionTask" targetRef="sid-8FDFDC79-A81F-4087-A3EB-E0C030C16F1E"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_tutorial5_compute_server">
+    <bpmndi:BPMNPlane bpmnElement="tutorial5_compute_server" id="BPMNPlane_tutorial5_compute_server">
+      <bpmndi:BPMNShape bpmnElement="sid-64469F0E-7F8B-4C1E-A8ED-548EEAA85D19" id="BPMNShape_sid-64469F0E-7F8B-4C1E-A8ED-548EEAA85D19">
+        <omgdc:Bounds height="30.0" width="30.5" x="99.75" y="163.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="checkHardwareTask" id="BPMNShape_checkHardwareTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="180.0" y="138.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sendDescriptionTask" id="BPMNShape_sendDescriptionTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="360.0" y="138.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-8FDFDC79-A81F-4087-A3EB-E0C030C16F1E" id="BPMNShape_sid-8FDFDC79-A81F-4087-A3EB-E0C030C16F1E">
+        <omgdc:Bounds height="28.0" width="28.0" x="530.0" y="164.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-F1486312-EC7E-461C-A74F-85D4B8999F20" id="BPMNEdge_sid-F1486312-EC7E-461C-A74F-85D4B8999F20">
+        <omgdi:waypoint x="459.9499999999519" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="530.0" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-1144AB4E-5CA0-4486-A5BB-A83BE0AE7AA3" id="BPMNEdge_sid-1144AB4E-5CA0-4486-A5BB-A83BE0AE7AA3">
+        <omgdi:waypoint x="279.9499999999431" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="359.99999999997226" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-34654C74-F351-4842-AAC7-8B57EA58AAE4" id="BPMNEdge_sid-34654C74-F351-4842-AAC7-8B57EA58AAE4">
+        <omgdi:waypoint x="130.69999846839278" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="179.99999999999164" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
