@@ -12,21 +12,19 @@ import org.flowable.common.engine.api.delegate.event.FlowableEngineEvent;
 import java.util.HashMap;
 
 /**
- * Report for usage with the "Road Monitoring" scenario presented in JSS paper (STEP-ONE: Simulated Testbed for Edge-Fog Processes based on the Opportunistic Network Environment Simulator)
+ * Produces a report for each process instance run during the simulation.
  */
-public class RoadMonitoringReport extends Report implements ApplicationListener {
+public class FullBpmReport extends Report implements ApplicationListener {
 
     public static final String PROCESS_STARTED = "process_start";
-    public static final String ROAD_PROCESS_STARTED = "road_process_start";
-    public static final String ROAD_FOG_DECISION_COMPLETED = "road_decision_completed";
     public static final String PROCESS_COMPLETED = "process_completed";
     public static final String PROCESS_CANCELLED = "process_cancelled";
 
 
 
-    HashMap<String, RoadMonitoringReport.ProcessEntry> instanceMap;
+    HashMap<String, FullBpmReport.ProcessEntry> instanceMap;
 
-    public RoadMonitoringReport() {
+    public FullBpmReport() {
         instanceMap = new HashMap<>();
     }
 
@@ -44,25 +42,15 @@ public class RoadMonitoringReport extends Report implements ApplicationListener 
         FlowableEngineEvent flowableEvent = timeAndNameAndInstance.getRight();
         String instanceId = flowableEvent.getProcessInstanceId() + "_" + host.getName();
         String processKey = flowableEvent.getProcessDefinitionId();
-        RoadMonitoringReport.ProcessEntry entry = instanceMap.getOrDefault(instanceId, new RoadMonitoringReport.ProcessEntry(instanceId,  host.getName(),processKey));
+        FullBpmReport.ProcessEntry entry = instanceMap.getOrDefault(instanceId, new FullBpmReport.ProcessEntry(instanceId,  host.getName(),processKey));
 
         switch (event){
-            case ROAD_FOG_DECISION_COMPLETED:
-
-                entry.operatingMode = (String) ((BpmEngineApplication) app).getEngine().getProcessEngine().getRuntimeService()
-                        .getVariable(flowableEvent.getExecutionId(), "operatingMode");
-
-                break;
             case PROCESS_STARTED:
                 entry.startTime = time;
                 entry.status = "process_started";
-                entry.masterProcess = (String) ((BpmEngineApplication) app).getEngine().getProcessEngine().getRuntimeService()
-                        .getVariable(flowableEvent.getExecutionId(), "resultsProcessInstanceId");
 
                 break;
             case PROCESS_COMPLETED:
-//                final String operatingMode = (String) ((FlowableProcessC) flowableEvent).getVariables().getOrDefault("operatingMode", "undefined");
-
                 entry.completeTime = time;
                 entry.totalTime = entry.completeTime - entry.startTime;
 //                entry.endEnergy = getEnergy(host);
@@ -86,7 +74,7 @@ public class RoadMonitoringReport extends Report implements ApplicationListener 
                 getProperty(routing.util.EnergyModel.ENERGY_VALUE_ID);
         if (value == null) {
             throw new SimError("Host " + host +
-                    " is not using energy fog");
+                    " is not using energy modeling");
         }
         return value;
     }
@@ -95,7 +83,7 @@ public class RoadMonitoringReport extends Report implements ApplicationListener 
     public void done() {
 //        write("Bpm stats for scenario " + getScenarioName() +
 //                "\nsim_time: " + format(getSimTime()));
-        String header = "proc_id;hostname;proc_key;master_process;opmode;proc_started;proc_completed;proc_cancelled;totaltime;finalstatus";
+        String header = "proc_id;hostname;proc_key;proc_started;proc_completed;proc_cancelled;totaltime;finalstatus";
         write(header);
 
 
@@ -104,8 +92,6 @@ public class RoadMonitoringReport extends Report implements ApplicationListener 
                     entry.instanceId,
                     entry.host,
                     entry.processName,
-                    String.valueOf( entry.masterProcess),
-                    String.valueOf( entry.operatingMode),
                     String.valueOf( entry.startTime),
                     String.valueOf( entry.completeTime),
                     String.valueOf( entry.cancelTime),
@@ -117,22 +103,6 @@ public class RoadMonitoringReport extends Report implements ApplicationListener 
 
             write(csvLine);
 
-
-//            String statsText = "Processes started: " + hostStats.get(PROCESS_STARTED) +
-//                    "\nProcesses completed: " + hostStats.get(PROCESS_COMPLETED)+
-//
-//                    "\nActivities started: " + hostStats.get(ACTIVITY_STARTED)+
-//                    "\nActivities completed: " + hostStats.get(ACTIVITY_COMPLETED)+
-//
-//                    "\nMessages sent: " + hostStats.get(SENT_MESSAGE)+
-//                    "\nMessages received: " + hostStats.get(RECEIVED_MESSAGE)+
-//
-//                    "\nSignals received: " + hostStats.get(RECEIVED_SIGNAL_NEARBY)
-//
-//                    ;
-//
-//            write(statsText);
-
         });
 
 
@@ -140,8 +110,6 @@ public class RoadMonitoringReport extends Report implements ApplicationListener 
     }
 
     private class ProcessEntry  {
-        public String operatingMode;
-        public String masterProcess;
         private String processName;
         double startTime;
         double completeTime;

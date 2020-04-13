@@ -10,8 +10,8 @@ Group.application1 = bpmApp
 
 # Add report for Ping app
 Report.nrofReports = 2
-Report.report1 = BpmAppReporter
-Report.report2 = DetailedBpmReporter
+Report.report1 = FullBpmReport
+Report.report2 = HostBpmReport
 Report.reportDir = reports/bpm_pingpong
 
 Scenario.nrofHostGroups = 1
