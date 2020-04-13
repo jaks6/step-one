@@ -25,6 +25,8 @@ public class JobHandle {
         return workDone;
     }
 
+    public int getWorkLeft() { return workLeft; }
+
     public int getSize() {
         return size;
     }
@@ -35,7 +37,7 @@ public class JobHandle {
 
     @Override
     public String toString() {
-        return String.format("JobHandle %s [%s/%s]", executionId, workDone, size);
+        return String.format("JobHandle %s [%s/%s]", executionId, size-workLeft, size);
     }
 
     /** Update work done on this job.
