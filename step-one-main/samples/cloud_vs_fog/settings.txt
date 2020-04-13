@@ -1,0 +1,127 @@
+Scenario.name = Cloud Vs Fog
+
+Scenario.endTime = 500
+
+## REPORTS
+Report.nrofReports = 2
+
+Report.report1 = HostBpmReport
+Report.report2 = FullBpmReport
+Report.reportDir = samples/cloud_vs_fog/reports
+
+
+
+# ---------------------------------
+# W L A N      I N T E R F A C E
+# ---------------------------------
+wlanInterface.type = DistanceCapacityInterface
+
+# values from http://www.xirrus.com/cdn/pdf/wifi-demystified/documents_posters_range_plotter
+# 0-50ft:54Mbps, 75-100ft:48 Mbps, 125ft:36Mbps, 150ft:24 Mbps, 175ft:18Mbps,
+# 200ft:12Mbps, 225ft:9Mbps, 250ft:6Mbps, 275ft:2Mbps, 300ft:1Mbps
+
+wlanInterface.transmitSpeeds = 6750k, 6750k, 6750k, 6000k, 6000k, 4500k, 3000k, 2250k, 1500k, 1125k, 750k, 250k, 125k
+wlanInterface.transmitRange = 91
+
+# dummy speed, not used
+wlanInterface.transmitSpeed = 0
+
+# ---------------------------------
+# LTE      I N T E R F A C E
+# ---------------------------------
+lteInterface.type = SimpleBroadcastInterface
+# Speed: 12Mbps
+lteInterface.transmitSpeed = 1500k
+# We are simplifying things by considering that LTE coverage is everywhere:
+lteInterface.transmitRange = 9999999999
+
+
+
+## ------------------------
+##   HOST GROUPS
+## ------------------------
+
+Scenario.nrofHostGroups = 3
+
+# Common settings for all groups
+Group.router = DirectMultiTransferRouter
+Group.bufferSize = 512M
+Group.waitTime = 15, 30
+# 30-40 km/h
+Group.speed = 8.33, 11.1
+
+# 1) MOBILE NODE GROUP
+Group1.nrofHosts = 1
+Group1.nodeLocation = 150,50
+Group1.groupID = Mobile
+
+# 2) FOG NODE GROUP
+Group2.nrofHosts = 1
+Group2.nodeLocation = 200,100
+Group2.groupID = Fog
+
+# 3) CLOUD NODE GROUP
+Group3.nrofHosts = 1
+Group3.nodeLocation = -100,-100
+Group3.groupID = Cloud
+
+
+# Mobile has LTE and WLAN interfaces
+Group1.nrofInterfaces = 2
+Group1.interface1 = lteInterface
+Group1.interface2 = wlanInterface
+
+# Fog has WLAN interface
+Group2.nrofInterfaces = 1
+Group2.interface1 = wlanInterface
+
+# Cloud is connected to mobile via LTE
+Group3.nrofInterfaces = 1
+Group3.interface1 = lteInterface
+
+
+## Movement
+Group1.movementModel = LinearMovement
+Group1.LinearMovement.startLocation = 20,350
+Group1.LinearMovement.endLocation = 140,90
+
+# Set linearmovement to move from one end of the line to the other (e.g. instead of random point on line).
+# See 'LinearMovement' class for more documentation
+Group1.LinearMovement.initLocType = 1
+Group1.LinearMovement.targetType = 1
+
+
+
+
+
+## ------------------------
+##   APPLICATIONS
+## ------------------------
+mobileProcessEngine.type = bpm.BpmEngineApplication
+fogProcessEngine.type = bpm.BpmEngineApplication
+cloudProcessEngine.type = bpm.BpmEngineApplication
+
+
+Group.nrofApplications = 1
+
+Group1.application1 = mobileProcessEngine
+Group2.application1 = fogProcessEngine
+Group3.application1 = cloudProcessEngine
+
+
+mobileProcessEngine.autoDeployedProcesses = samples/cloud_vs_fog/Fog_or_Cloud_Decision.bpmn20.xml
+#mobileProcessEngine.autoStartedProcessKeys = fogclouddecision
+#mobileProcessEngine.autoStartedProcessVars = workSize=3150000
+
+
+
+fogProcessEngine.autoDeployedProcesses = samples/cloud_vs_fog/Server_Load_Reporting.bpmn20.xml,samples/cloud_vs_fog/CloudVsFog_Worker.bpmn20.xml
+cloudProcessEngine.autoDeployedProcesses = samples/cloud_vs_fog/CloudVsFog_Worker.bpmn20.xml
+
+
+## Hardware configuration
+cloudProcessEngine.noOfCpus = 24
+cloudProcessEngine.cpuSpeed = 55000
+
+fogProcessEngine.noOfCpus = 2
+fogProcessEngine.cpuSpeed = 31500

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <message id="workerStartmessage" name="Start Work"></message>
+  <process id="cloudvsfog_worker" name="CloudVsFog Worker" isExecutable="true">
+    <startEvent id="sid-2B1D8AF9-1939-41B8-B48C-ABD6B5117321" name="'Start Work'
+Message Received" isInterrupting="true">
+      <messageEventDefinition messageRef="workerStartmessage"></messageEventDefinition>
+    </startEvent>
+    <sequenceFlow id="sid-5C534D60-2A76-490A-9CBB-D2C2DEB528AF" sourceRef="sid-2B1D8AF9-1939-41B8-B48C-ABD6B5117321" targetRef="workTask"></sequenceFlow>
+    <serviceTask id="workTask" name="Do Compute Work" flowable:class="ee.mass.epm.sim.task.SimulatedTask" flowable:type="stepone_work" flowable:triggerable="true">
+      <extensionElements>
+        <flowable:field name="work_size">
+          <flowable:expression><![CDATA[${workSize}]]></flowable:expression>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="sid-D6FA9D54-8A20-4FB6-97F7-7DE2891C26C8" sourceRef="workTask" targetRef="workResultMessageTask"></sequenceFlow>
+    <serviceTask id="workResultMessageTask" name="Send Work Result" flowable:class="ee.mass.epm.sim.task.MessageTask" flowable:type="stepone_msg" flowable:triggerable="true">
+      <extensionElements>
+        <flowable:field name="msg_name">
+          <flowable:string><![CDATA[Work Result]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="msg_destination">
+          <flowable:expression><![CDATA[${startMessageSenderAddress}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="msg_size">
+          <flowable:string><![CDATA[5000000]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+    <endEvent id="sid-904A0CFF-F2F1-4EC8-9F96-75D28228A75A" name="End"></endEvent>
+    <sequenceFlow id="sid-223EF094-22F3-4B80-BB07-5439BA64ED8B" sourceRef="workResultMessageTask" targetRef="sid-904A0CFF-F2F1-4EC8-9F96-75D28228A75A"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_cloudvsfog_worker">
+    <bpmndi:BPMNPlane bpmnElement="cloudvsfog_worker" id="BPMNPlane_cloudvsfog_worker">
+      <bpmndi:BPMNShape bpmnElement="sid-2B1D8AF9-1939-41B8-B48C-ABD6B5117321" id="BPMNShape_sid-2B1D8AF9-1939-41B8-B48C-ABD6B5117321">
+        <omgdc:Bounds height="30.0" width="30.5" x="99.75" y="163.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="workTask" id="BPMNShape_workTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="196.0" y="138.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="workResultMessageTask" id="BPMNShape_workResultMessageTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="345.0" y="138.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-904A0CFF-F2F1-4EC8-9F96-75D28228A75A" id="BPMNShape_sid-904A0CFF-F2F1-4EC8-9F96-75D28228A75A">
+        <omgdc:Bounds height="28.0" width="28.0" x="525.0" y="164.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-D6FA9D54-8A20-4FB6-97F7-7DE2891C26C8" id="BPMNEdge_sid-D6FA9D54-8A20-4FB6-97F7-7DE2891C26C8">
+        <omgdi:waypoint x="295.94999999997356" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="344.99999999998346" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-223EF094-22F3-4B80-BB07-5439BA64ED8B" id="BPMNEdge_sid-223EF094-22F3-4B80-BB07-5439BA64ED8B">
+        <omgdi:waypoint x="444.94999999998265" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="525.0" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-5C534D60-2A76-490A-9CBB-D2C2DEB528AF" id="BPMNEdge_sid-5C534D60-2A76-490A-9CBB-D2C2DEB528AF">
+        <omgdi:waypoint x="130.6999988201775" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="195.9999999999962" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

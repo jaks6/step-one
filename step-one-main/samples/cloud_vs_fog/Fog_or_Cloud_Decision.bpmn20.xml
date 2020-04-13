@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <message id="loadReportMsg" name="Load Report"></message>
+  <process id="fogclouddecision" name="Fog or Cloud Decision" isExecutable="true">
+    <startEvent id="startTimerEvent" name="Every 30s (10x)" isInterrupting="false">
+      <timerEventDefinition>
+        <timeCycle>R10/PT30S</timeCycle>
+      </timerEventDefinition>
+    </startEvent>
+    <serviceTask id="checkConnectedFogsTask" name="Check if Fog servers nearby" flowable:class="ee.mass.epm.samples.CheckConnectedFogServers" flowable:type="stepone_work" flowable:triggerable="true"></serviceTask>
+    <exclusiveGateway id="sid-32B789C5-F33F-4101-B6AE-6200CF15F8CF" default="sid-3DC81927-9C68-4081-BD38-8CBC569095CA"></exclusiveGateway>
+    <sequenceFlow id="sid-34DA8691-A5B9-47DF-9968-45CEDCFDD280" sourceRef="checkConnectedFogsTask" targetRef="sid-32B789C5-F33F-4101-B6AE-6200CF15F8CF"></sequenceFlow>
+    <intermediateCatchEvent id="receiveLoadMsgEvent" name="&quot;Load Report&quot; Received">
+      <messageEventDefinition messageRef="loadReportMsg"></messageEventDefinition>
+    </intermediateCatchEvent>
+    <serviceTask id="deployWorkerTask" name="Deploy to worker" flowable:class="ee.mass.epm.sim.task.DeployMessageTask" flowable:type="stepone_msg_deploy" flowable:triggerable="true">
+      <extensionElements>
+        <flowable:field name="msg_name">
+          <flowable:string><![CDATA[Work Process Deployment]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="msg_destination">
+          <flowable:expression><![CDATA[${workerAddress}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="msg_size">
+          <flowable:string><![CDATA[8096]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="deployed_resource">
+          <flowable:string><![CDATA[samples/cloud_vs_fog/CloudVsFog_Worker.bpmn20.xml]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+    <serviceTask id="startWorkerTask" name="Start Worker Process" flowable:class="ee.mass.epm.sim.task.StartEventMessageTask" flowable:type="stepone_msg_startprocess" flowable:triggerable="true">
+      <extensionElements>
+        <flowable:field name="msg_name">
+          <flowable:string><![CDATA[Start Work]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="msg_destination">
+          <flowable:expression><![CDATA[${workerAddress}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="msg_size">
+          <flowable:string><![CDATA[512]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="included_vars">
+          <flowable:string><![CDATA[workSize]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+    <endEvent id="endEvent" name="End"></endEvent>
+    <sequenceFlow id="sid-849AB6A9-0724-4956-BEA9-EF0898E7AC5F" sourceRef="startWorkerTask" targetRef="endEvent"></sequenceFlow>
+    <sequenceFlow id="sid-F36F8BE7-077E-4169-BE9C-D6BF05358CB1" sourceRef="receiveLoadMsgEvent" targetRef="decideWorkerTask"></sequenceFlow>
+    <serviceTask id="decideWorkerTask" name="Choose worker based on fog load" flowable:class="ee.mass.epm.samples.DecideWorkerTask" flowable:type="stepone_work" flowable:triggerable="true"></serviceTask>
+    <exclusiveGateway id="sid-4EC39672-553A-4ACE-B730-205540980587"></exclusiveGateway>
+    <sequenceFlow id="sid-B0A424D2-8CD4-4C3E-8E04-3F639E3CBC2E" sourceRef="sid-4EC39672-553A-4ACE-B730-205540980587" targetRef="deployWorkerTask"></sequenceFlow>
+    <sequenceFlow id="sid-774736E1-4BBA-4C29-BC2A-C8854D8E7F85" sourceRef="deployWorkerTask" targetRef="startWorkerTask"></sequenceFlow>
+    <serviceTask id="askFogLoadTask" name="Send &quot;Load Inquiry&quot; Message" flowable:class="ee.mass.epm.sim.task.StartEventMessageTask" flowable:type="stepone_msg_startprocess" flowable:triggerable="true">
+      <documentation>The process started by this message will have a variable 'startMessageSenderAddress' available to it, which it can use to interact with the host who started the process.</documentation>
+      <extensionElements>
+        <flowable:field name="msg_name">
+          <flowable:string><![CDATA[Load Inquiry]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="msg_destination">
+          <flowable:expression><![CDATA[${fogServerAddress}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="msg_size">
+          <flowable:string><![CDATA[512]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="sid-5D3D6A89-89EB-4570-A350-2C3B968B7199" sourceRef="askFogLoadTask" targetRef="receiveLoadMsgEvent"></sequenceFlow>
+    <sequenceFlow id="sid-309F0445-FF3A-42D0-8EB2-3CD2DB2C6AA2" sourceRef="decideWorkerTask" targetRef="sid-4EC39672-553A-4ACE-B730-205540980587"></sequenceFlow>
+    <scriptTask id="workSizeScriptTask" name="Set Work Size" scriptFormat="javascript" flowable:autoStoreVariables="false">
+      <script><![CDATA[execution.setVariable("workSize", 3150000)]]></script>
+    </scriptTask>
+    <sequenceFlow id="sid-83881865-D1DD-4EFC-94FA-82C452F4BAE1" sourceRef="startTimerEvent" targetRef="workSizeScriptTask"></sequenceFlow>
+    <sequenceFlow id="sid-80436712-C611-4A4D-972D-F82FF6191DDA" sourceRef="workSizeScriptTask" targetRef="checkConnectedFogsTask"></sequenceFlow>
+    <sequenceFlow id="sid-9E32F246-58E3-4A5F-BFB6-BD0C8DD5F7B0" name="Try to use fog" sourceRef="sid-32B789C5-F33F-4101-B6AE-6200CF15F8CF" targetRef="askFogLoadTask">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ execution.hasVariable('fogServerAddress') }]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-3DC81927-9C68-4081-BD38-8CBC569095CA" name="Use Cloud" sourceRef="sid-32B789C5-F33F-4101-B6AE-6200CF15F8CF" targetRef="sid-4EC39672-553A-4ACE-B730-205540980587">
+      <extensionElements>
+        <flowable:executionListener event="start" expression="${ execution.setVariable('workerAddress', 2) }"></flowable:executionListener>
+      </extensionElements>
+    </sequenceFlow>
+    <textAnnotation id="sid-6E191DF3-AC78-4608-8F85-77EE245B9F11">
+      <text>sets var "fogServerAddress"</text>
+    </textAnnotation>
+    <association id="sid-2FAF82DE-CE53-44A8-A5EF-C475A255FA2C" sourceRef="checkConnectedFogsTask" targetRef="sid-6E191DF3-AC78-4608-8F85-77EE245B9F11" associationDirection="None"></association>
+    <textAnnotation id="sid-25BCA5C4-A898-4375-B763-F45E80A765D2">
+      <text>sets workerAddress as either fog or cloud</text>
+    </textAnnotation>
+    <association id="sid-26C3657E-D29F-4206-9FAC-1F83E5F64D5C" sourceRef="decideWorkerTask" targetRef="sid-25BCA5C4-A898-4375-B763-F45E80A765D2" associationDirection="None"></association>
+    <textAnnotation id="sid-2856E13D-6F23-4900-B29E-E9638595A577">
+      <text>Flow listener sets workerAddress to "2"</text>
+    </textAnnotation>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_fogclouddecision">
+    <bpmndi:BPMNPlane bpmnElement="fogclouddecision" id="BPMNPlane_fogclouddecision">
+      <bpmndi:BPMNShape bpmnElement="startTimerEvent" id="BPMNShape_startTimerEvent">
+        <omgdc:Bounds height="31.0" width="31.0" x="30.0" y="195.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="checkConnectedFogsTask" id="BPMNShape_checkConnectedFogsTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="225.0" y="170.5"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-32B789C5-F33F-4101-B6AE-6200CF15F8CF" id="BPMNShape_sid-32B789C5-F33F-4101-B6AE-6200CF15F8CF">
+        <omgdc:Bounds height="40.0" width="40.0" x="345.0" y="190.5"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-6E191DF3-AC78-4608-8F85-77EE245B9F11" id="BPMNShape_sid-6E191DF3-AC78-4608-8F85-77EE245B9F11">
+        <omgdc:Bounds height="50.0" width="100.0" x="135.0" y="45.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-2FAF82DE-CE53-44A8-A5EF-C475A255FA2C" id="BPMNShape_sid-2FAF82DE-CE53-44A8-A5EF-C475A255FA2C">
+        <omgdc:Bounds height="82.58886370525306" width="81.12969650198005" x="154.07577674900998" y="87.40088064737347"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="receiveLoadMsgEvent" id="BPMNShape_receiveLoadMsgEvent">
+        <omgdc:Bounds height="30.0" width="30.0" x="555.0" y="310.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="deployWorkerTask" id="BPMNShape_deployWorkerTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="825.0" y="170.5"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startWorkerTask" id="BPMNShape_startWorkerTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="975.0" y="170.5"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endEvent" id="BPMNShape_endEvent">
+        <omgdc:Bounds height="28.0" width="28.0" x="1140.0" y="196.5"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="decideWorkerTask" id="BPMNShape_decideWorkerTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="645.0" y="285.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-4EC39672-553A-4ACE-B730-205540980587" id="BPMNShape_sid-4EC39672-553A-4ACE-B730-205540980587">
+        <omgdc:Bounds height="40.0" width="40.0" x="750.0" y="190.5"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-25BCA5C4-A898-4375-B763-F45E80A765D2" id="BPMNShape_sid-25BCA5C4-A898-4375-B763-F45E80A765D2">
+        <omgdc:Bounds height="50.0" width="100.0" x="690.0" y="405.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-26C3657E-D29F-4206-9FAC-1F83E5F64D5C" id="BPMNShape_sid-26C3657E-D29F-4206-9FAC-1F83E5F64D5C">
+        <omgdc:Bounds height="38.62647765073734" width="1.4856337557976076" x="691.9446831221012" y="365.81176117463133"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="askFogLoadTask" id="BPMNShape_askFogLoadTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="405.0" y="285.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="workSizeScriptTask" id="BPMNShape_workSizeScriptTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="90.0" y="170.5"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-2856E13D-6F23-4900-B29E-E9638595A577" id="BPMNShape_sid-2856E13D-6F23-4900-B29E-E9638595A577">
+        <omgdc:Bounds height="55.0" width="206.0" x="495.0" y="135.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-309F0445-FF3A-42D0-8EB2-3CD2DB2C6AA2" id="BPMNEdge_sid-309F0445-FF3A-42D0-8EB2-3CD2DB2C6AA2">
+        <omgdi:waypoint x="744.9499999999999" y="325.0"></omgdi:waypoint>
+        <omgdi:waypoint x="770.5" y="325.0"></omgdi:waypoint>
+        <omgdi:waypoint x="770.5" y="229.90827480245835"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-26C3657E-D29F-4206-9FAC-1F83E5F64D5C" id="BPMNEdge_sid-26C3657E-D29F-4206-9FAC-1F83E5F64D5C">
+        <omgdi:waypoint x="693.4615384615385" y="364.95000000000005"></omgdi:waypoint>
+        <omgdi:waypoint x="691.9211538461539" y="405.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-F36F8BE7-077E-4169-BE9C-D6BF05358CB1" id="BPMNEdge_sid-F36F8BE7-077E-4169-BE9C-D6BF05358CB1">
+        <omgdi:waypoint x="584.949998830493" y="325.0"></omgdi:waypoint>
+        <omgdi:waypoint x="645.0" y="325.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-3DC81927-9C68-4081-BD38-8CBC569095CA" id="BPMNEdge_sid-3DC81927-9C68-4081-BD38-8CBC569095CA">
+        <omgdi:waypoint x="384.44766107127725" y="211.0"></omgdi:waypoint>
+        <omgdi:waypoint x="750.5" y="211.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-2FAF82DE-CE53-44A8-A5EF-C475A255FA2C" id="BPMNEdge_sid-2FAF82DE-CE53-44A8-A5EF-C475A255FA2C">
+        <omgdi:waypoint x="235.70671378091873" y="170.5"></omgdi:waypoint>
+        <omgdi:waypoint x="161.49151943462897" y="94.94999999999999"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-80436712-C611-4A4D-972D-F82FF6191DDA" id="BPMNEdge_sid-80436712-C611-4A4D-972D-F82FF6191DDA">
+        <omgdi:waypoint x="189.9499999999527" y="210.5"></omgdi:waypoint>
+        <omgdi:waypoint x="224.99999999997203" y="210.5"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-849AB6A9-0724-4956-BEA9-EF0898E7AC5F" id="BPMNEdge_sid-849AB6A9-0724-4956-BEA9-EF0898E7AC5F">
+        <omgdi:waypoint x="1074.95" y="210.5"></omgdi:waypoint>
+        <omgdi:waypoint x="1140.0" y="210.5"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-774736E1-4BBA-4C29-BC2A-C8854D8E7F85" id="BPMNEdge_sid-774736E1-4BBA-4C29-BC2A-C8854D8E7F85">
+        <omgdi:waypoint x="924.9499999999581" y="210.5"></omgdi:waypoint>
+        <omgdi:waypoint x="974.9999999999363" y="210.5"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-9E32F246-58E3-4A5F-BFB6-BD0C8DD5F7B0" id="BPMNEdge_sid-9E32F246-58E3-4A5F-BFB6-BD0C8DD5F7B0">
+        <omgdi:waypoint x="365.5" y="229.94169588080632"></omgdi:waypoint>
+        <omgdi:waypoint x="365.5" y="325.0"></omgdi:waypoint>
+        <omgdi:waypoint x="405.0" y="325.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-34DA8691-A5B9-47DF-9968-45CEDCFDD280" id="BPMNEdge_sid-34DA8691-A5B9-47DF-9968-45CEDCFDD280">
+        <omgdi:waypoint x="324.9499999999989" y="210.77596685082872"></omgdi:waypoint>
+        <omgdi:waypoint x="345.38888888888835" y="210.88888888888889"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-B0A424D2-8CD4-4C3E-8E04-3F639E3CBC2E" id="BPMNEdge_sid-B0A424D2-8CD4-4C3E-8E04-3F639E3CBC2E">
+        <omgdi:waypoint x="789.531916426502" y="210.90865384615387"></omgdi:waypoint>
+        <omgdi:waypoint x="824.999999999998" y="210.738995215311"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-5D3D6A89-89EB-4570-A350-2C3B968B7199" id="BPMNEdge_sid-5D3D6A89-89EB-4570-A350-2C3B968B7199">
+        <omgdi:waypoint x="504.95000000000005" y="325.20928770949723"></omgdi:waypoint>
+        <omgdi:waypoint x="555.0000149918334" y="325.41899497106715"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-83881865-D1DD-4EFC-94FA-82C452F4BAE1" id="BPMNEdge_sid-83881865-D1DD-4EFC-94FA-82C452F4BAE1">
+        <omgdi:waypoint x="61.94977911134629" y="210.91489479564405"></omgdi:waypoint>
+        <omgdi:waypoint x="89.99999999999642" y="210.76569148936167"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

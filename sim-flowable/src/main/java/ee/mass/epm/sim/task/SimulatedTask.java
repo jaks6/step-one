@@ -27,7 +27,8 @@ public class SimulatedTask  extends ServiceTask implements TriggerableActivityBe
 
         int jobsize = 0;
         if (work_size != null){
-            jobsize = Integer.parseInt( (String) work_size.getValue(execution) );
+
+            jobsize = Integer.parseInt( (String.valueOf(work_size.getValue(execution))) );
 
         }
 

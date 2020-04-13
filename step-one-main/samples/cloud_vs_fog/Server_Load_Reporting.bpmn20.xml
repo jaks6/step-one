@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <message id="loadInquiryMsg" name="Load Inquiry"></message>
+  <process id="server_load_reporting" name="Server Load Reporting" isExecutable="true">
+    <startEvent id="start" isInterrupting="true">
+      <messageEventDefinition messageRef="loadInquiryMsg"></messageEventDefinition>
+    </startEvent>
+    <serviceTask id="sendReportTask" name="Send Load Report" flowable:class="ee.mass.epm.sim.task.MessageTask" flowable:type="stepone_msg" flowable:triggerable="true">
+      <extensionElements>
+        <flowable:field name="msg_name">
+          <flowable:string><![CDATA[Load Report]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="msg_destination">
+          <flowable:expression><![CDATA[${startMessageSenderAddress}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="msg_size">
+          <flowable:string><![CDATA[1024]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="included_vars">
+          <flowable:string><![CDATA[noOfCpus,cpuSpeed,queueSizeMips]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+    <endEvent id="end"></endEvent>
+    <sequenceFlow id="sid-A0DE72FD-C17E-41DA-AE80-B2893C1FC3F6" sourceRef="sendReportTask" targetRef="end"></sequenceFlow>
+    <serviceTask id="checkLoadServiceTask" name="Check CPU Load" flowable:class="ee.mass.epm.samples.CheckLoadTask"></serviceTask>
+    <sequenceFlow id="sid-22347ACF-F006-4835-8B17-5D4B63111876" sourceRef="start" targetRef="checkLoadServiceTask"></sequenceFlow>
+    <sequenceFlow id="sid-2DFD2572-31C3-41D2-B101-CE9707D3EDF8" sourceRef="checkLoadServiceTask" targetRef="sendReportTask"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_server_load_reporting">
+    <bpmndi:BPMNPlane bpmnElement="server_load_reporting" id="BPMNPlane_server_load_reporting">
+      <bpmndi:BPMNShape bpmnElement="start" id="BPMNShape_start">
+        <omgdc:Bounds height="30.0" width="30.5" x="165.0" y="163.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sendReportTask" id="BPMNShape_sendReportTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="390.0" y="138.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="28.0" width="28.0" x="555.0" y="164.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="checkLoadServiceTask" id="BPMNShape_checkLoadServiceTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="240.0" y="138.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-A0DE72FD-C17E-41DA-AE80-B2893C1FC3F6" id="BPMNEdge_sid-A0DE72FD-C17E-41DA-AE80-B2893C1FC3F6">
+        <omgdi:waypoint x="489.95000000000005" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="555.0" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-2DFD2572-31C3-41D2-B101-CE9707D3EDF8" id="BPMNEdge_sid-2DFD2572-31C3-41D2-B101-CE9707D3EDF8">
+        <omgdi:waypoint x="339.9499999999581" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="389.9999999999364" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-22347ACF-F006-4835-8B17-5D4B63111876" id="BPMNEdge_sid-22347ACF-F006-4835-8B17-5D4B63111876">
+        <omgdi:waypoint x="195.9499983180773" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="239.99999999995842" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
