@@ -14,18 +14,22 @@ The below tutorials walk you through how to create process-oriented scenarios wi
 
 ## Running & Configuring STEP-ONE simulations
 
-STEP-ONE scenarios can be run with Gradle, providing as argument the settings file to use:
+* STEP-ONE scenarios can be run with Gradle, providing as argument the settings file to use:
 
 ```
 ./gradlew run --args samples/tutorial1_basic_messaging/settings.txt
 ```
 
+* STEP-ONE processes can be created using the STEP-ONE version of Flowable BPMN modeller:
+  * Install [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
+  * Go to *step-one-modeler* directory, which contains the *docker-compose.yml* file.  `cd ./step-one/step-one-modeler`
+  * Run `docker-compose up`
+  * After the web-app service has finished initialising, use a browser to open the modeller at:
+    http://localhost:8888/flowable-modeler
 
-
-<ul>
-	<li><a href="{{ site.baseurl }}{% link _posts/2020-04-06-configuration.md %}">Configuring STEP-ONE simulation settings files</a></li>
-</ul>
 ## Tutorials
+
+*The following implemented versions of these tutorials can be found [here](https://github.com/jaks6/step-one/tree/master/step-one-main/samples)*. That includes settings files and BPMN files.
 
   <ul>
   	{% assign sorted = site.categories["tutorial"] | sort: 'date'  %}
