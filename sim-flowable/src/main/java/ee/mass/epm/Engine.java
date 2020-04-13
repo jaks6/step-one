@@ -1,9 +1,6 @@
 package ee.mass.epm;
 
-import ee.mass.epm.sim.CpuConf;
-import ee.mass.epm.sim.OneTimerParse;
-import ee.mass.epm.sim.SimulatedWorkQueue;
-import ee.mass.epm.sim.LocationSignalSubscription;
+import ee.mass.epm.sim.*;
 import ee.mass.epm.sim.message.EngineMessageContent;
 import ee.mass.epm.sim.message.SimMessage;
 import org.flowable.common.engine.api.delegate.event.FlowableEvent;
@@ -11,6 +8,8 @@ import org.flowable.common.engine.api.delegate.event.FlowableEventListener;
 import org.flowable.common.engine.api.delegate.event.FlowableEventType;
 import org.flowable.common.engine.impl.runtime.Clock;
 import org.flowable.engine.*;
+import org.flowable.engine.interceptor.*;
+import org.flowable.engine.parse.BpmnParseHandler;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.runtime.ProcessInstanceQuery;
@@ -60,6 +59,9 @@ public class Engine implements SimulationApplicationEngine {
     public void init(Clock clock, CpuConf cpuConf) {
         String uniqueId = this.hashCode()+String.valueOf(Engine.appIdCounter);
 
+        List<BpmnParseHandler> postParseHandlerList = new ArrayList<>();
+        postParseHandlerList.add(new OneTimerParse(this));
+        postParseHandlerList.add(new OneStartEventTimerParse(this));
         //TODO: verify db conf (in-memory needed?)
         SimulatedProcessEngineConfiguration cfg = (SimulatedProcessEngineConfiguration) new SimulatedProcessEngineConfiguration(cpuConf)
 
@@ -69,8 +71,8 @@ public class Engine implements SimulationApplicationEngine {
 //                .setJdbcDriver("org.h2.Driver")
 //                .setAsyncExecutorActivate(true)
 
-                .setPostBpmnParseHandlers(
-                        Collections.singletonList(new OneTimerParse(this)))
+                .setPostBpmnParseHandlers(postParseHandlerList)
+                .setStartProcessInstanceInterceptor( new StepONEProcessStartInterceptor(this) )
                 .setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
 
         if (clock != null){
@@ -121,7 +123,7 @@ public class Engine implements SimulationApplicationEngine {
     @Override
     public ProcessInstance startProcessInstanceWithMessage(SimMessage msg) {
         Map<String, Object> processVariables = ((EngineMessageContent) msg.getContent()).variables;
-        processVariables.put(LOCALHOST_VAR, hostAddress);
+        // processVariables.put(LOCALHOST_VAR, hostAddress); // replaced by startprocessInterceptor
         return runtimeService.startProcessInstanceByMessage(msg.name, processVariables);
     }
 
@@ -132,7 +134,7 @@ public class Engine implements SimulationApplicationEngine {
 
     @Override
     public ProcessInstance startProcessInstance(String processKey, Map<String, Object> processVariables) {
-        processVariables.put(LOCALHOST_VAR, hostAddress);
+        // processVariables.put(LOCALHOST_VAR, hostAddress); // replaced by startprocessInterceptor
         return runtimeService.startProcessInstanceByKey(processKey, processVariables);
     }
 
