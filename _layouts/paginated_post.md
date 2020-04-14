@@ -27,7 +27,8 @@
       
       <h1 class="project-name">{{ page.title | default: site.title | default: site.github.repository_name }}</h1>
       <h2 class="project-tagline">{{ page.description | default: site.description | default: site.github.project_tagline }}</h2>
-      <a href="{{ site.url }}" class="btn">Home</a>
+       
+      <a href="{{ site.baseurl }}{% link index.md %}" class="btn">Home</a>
       {% if site.github.is_project_page %}
         <a href="{{ site.github.repository_url }}" class="btn">View on GitHub</a>
       {% endif %}
@@ -51,11 +52,17 @@
       <hr>
       <div class="Previous-next">
 	  {% if page.previous.url %}
-		<a class="previous" href="{{page.previous.url}}">&laquo; {{page.previous.title}}</a>
+		<a class="previous" href="{{ site.baseurl }}{{page.previous.url}}">&laquo; {{page.previous.title}}</a>
 	  {% endif %}
+	  
+		
+		
 	  {% if page.next.url %}
-		<a class="next" href="{{page.next.url}}">{{page.next.title}} &raquo;</a>
+		<a class="next" href="{{ site.baseurl }}{{page.next.url}}">{{page.next.title}} &raquo;</a>
 	  {% endif %}
+	  <h4 class="index-wrapper">
+		  <a href="{{ site.baseurl }}{% link index.md %}" class="index-btn">Back to Home</a>
+	  </h4>
 	</div>
       
 

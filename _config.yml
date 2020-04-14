@@ -21,7 +21,14 @@ baseurl: "/step-one" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 github_username:  jaks6
-paginate:     1
+
+show_downloads: true
+
+# Note, this color scheme would work good for CSS : linear-gradient(120deg, #ae8200, #ae002b);
+
+github:
+  zip_url: https://github.com/jaks6/step-one/zipball/master
+  tar_url: https://github.com/jaks6/step-one/tarball/master
 
 # Build settings
 markdown: kramdown
