@@ -52,17 +52,17 @@ Group.speed = 8.33, 11.1
 
 # 1) MOBILE NODE GROUP
 Group1.nrofHosts = 1
-Group1.nodeLocation = 150,50
+Group1.nodeLocation = 100,100
 Group1.groupID = Mobile
 
 # 2) FOG NODE GROUP
 Group2.nrofHosts = 1
-Group2.nodeLocation = 200,100
+Group2.nodeLocation = 350,200
 Group2.groupID = Fog
 
 # 3) CLOUD NODE GROUP
 Group3.nrofHosts = 1
-Group3.nodeLocation = -100,-100
+Group3.nodeLocation = 500,120
 Group3.groupID = Cloud
 
 
@@ -82,8 +82,8 @@ Group3.interface1 = lteInterface
 
 ## Movement
 Group1.movementModel = LinearMovement
-Group1.LinearMovement.startLocation = 20,350
-Group1.LinearMovement.endLocation = 140,90
+Group1.LinearMovement.startLocation = 100,400
+Group1.LinearMovement.endLocation = 320,220
 
 # Set linearmovement to move from one end of the line to the other (e.g. instead of random point on line).
 # See 'LinearMovement' class for more documentation
