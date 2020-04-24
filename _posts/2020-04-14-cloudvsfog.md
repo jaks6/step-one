@@ -157,6 +157,14 @@ public class DecideWorkerTask  extends SimulatedTask {
 
 When you run the simulation, the first iterations of main process offload work to the fog, until the fog load exceeds the configured threshold, after which the cloud is utilized. If the fogs load decreases, it is utilized again.
 
+The below video shows how we can use the process info windows to inspect which node ran how many processes, and e.g. what was the reported load that the mobile node received from the fog node for a given process instance:
+
+<div class="myvideo">
+       <video  style="display:block; width:100%; height:auto;" autoplay controls loop="loop">
+           <source src="https://kodu.ut.ee/~jaks/public/step-one/wiki-media/cloudvsfog/scenario.webm" type="video/webm" />
+       </video>
+    </div>
+
 
 
 This example is configured to generate 2 report files:
