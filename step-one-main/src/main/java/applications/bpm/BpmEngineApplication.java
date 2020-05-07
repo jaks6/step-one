@@ -93,7 +93,8 @@ public class BpmEngineApplication extends Application  {
     public Message handle(Message msg, DTNHost host) {
         log.debug("Handling Message");
         String type = (String) msg.getProperty(MESSAGE_PROPERTY_TYPE);
-        if (type != null && type.equals(MSG_TYPE_BPM)) {
+
+        if (msg.getTo() == host && type != null && type.equals(MSG_TYPE_BPM)) {
             return handleBpmMessage(msg, host);
         } else {
             return msg;
@@ -101,7 +102,7 @@ public class BpmEngineApplication extends Application  {
     }
 
     private Message handleBpmMessage(Message msg, DTNHost host) {
-        if (msg.getTo() != host) return null; // are we the recipient?
+
 
         int operation = (Integer) msg.getProperty(MESSAGE_PROPERTY_OPERATION);
         switch (operation){
