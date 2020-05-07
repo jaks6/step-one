@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <signal id="deviceConnectedSignal" name="Device Nearby" flowable:scope="global"></signal>
+  <message id="work_result_message" name="Work Result"></message>
+  <process id="bottomup_mobile" name="Bottom-Up Mobile" isExecutable="true">
+    <startEvent id="startEvent" name="Start" flowable:formFieldValidation="true"></startEvent>
+    <intermediateCatchEvent id="catchConnectionSignal" name="Some Device 
+Connected">
+      <signalEventDefinition signalRef="deviceConnectedSignal"></signalEventDefinition>
+    </intermediateCatchEvent>
+    <sequenceFlow id="sid-96F6A3D5-75CB-4FDB-812B-263289B770C1" sourceRef="startEvent" targetRef="catchConnectionSignal"></sequenceFlow>
+    <serviceTask id="startGwProcessTask" name="Start Delegated Work Process" flowable:class="ee.mass.epm.sim.task.StartEventMessageTask" flowable:type="stepone_msg_startprocess" flowable:triggerable="true">
+      <documentation>The process started by this message will have a variable 'startMessageSenderAddress' available to it, which it can use to interact with the host who started the process.</documentation>
+      <extensionElements>
+        <flowable:field name="msg_name">
+          <flowable:string><![CDATA[Start Gateway Process]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="msg_destination">
+          <flowable:expression><![CDATA[${lastConnectAddress}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="msg_size">
+          <flowable:string><![CDATA[512]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="included_vars">
+          <flowable:string><![CDATA[resultsAddress,workSize,noOfHops]]></flowable:string>
+        </flowable:field>
+        <flowable:executionListener event="start" expression="${execution.setVariable(&quot;resultsAddress&quot;, localhost) }"></flowable:executionListener>
+      </extensionElements>
+    </serviceTask>
+    <intermediateCatchEvent id="receiveWorkResultMessage" name="&quot;Work Result&quot; 
+message received">
+      <messageEventDefinition messageRef="work_result_message"></messageEventDefinition>
+    </intermediateCatchEvent>
+    <sequenceFlow id="sid-ECD41D57-3EBA-4DD8-880C-85F361B6A565" sourceRef="startGwProcessTask" targetRef="receiveWorkResultMessage"></sequenceFlow>
+    <endEvent id="endEvent" name="End"></endEvent>
+    <sequenceFlow id="sid-FEAA1F76-19A7-40E7-832E-83A32C019841" sourceRef="receiveWorkResultMessage" targetRef="endEvent"></sequenceFlow>
+    <exclusiveGateway id="gatewayXOR" name="Connected
+ to a gateway?" default="sid-9E099332-32E0-4B65-8FDA-B90D58D666A0"></exclusiveGateway>
+    <sequenceFlow id="sid-4B19B59F-4A31-4A56-A98E-E8F9DEF2A2A8" sourceRef="catchConnectionSignal" targetRef="gatewayXOR"></sequenceFlow>
+    <sequenceFlow id="sid-9E099332-32E0-4B65-8FDA-B90D58D666A0" name="No" sourceRef="gatewayXOR" targetRef="catchConnectionSignal"></sequenceFlow>
+    <sequenceFlow id="sid-41FA848E-659F-46F5-80C4-C1E59FD7ADF1" name="Yes" sourceRef="gatewayXOR" targetRef="startGwProcessTask">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${lastConnectAddress == 11}]]></conditionExpression>
+    </sequenceFlow>
+    <textAnnotation id="sid-644B9674-E29E-4700-B64D-7BA070AA9D72">
+      <text>sets "lastConnectAddress"</text>
+    </textAnnotation>
+    <association id="sid-1080E584-010B-4BF7-885F-3F12A69D4690" sourceRef="catchConnectionSignal" targetRef="sid-644B9674-E29E-4700-B64D-7BA070AA9D72" associationDirection="None"></association>
+    <textAnnotation id="sid-4864989C-DB66-4038-9361-EE0415A76F23">
+      <text>execution listener sets var "resultsAddress" to this hosts address. that var is attached to the message</text>
+    </textAnnotation>
+    <association id="sid-A77BC6E8-F7FC-43E4-AAD1-482085B5BB62" sourceRef="sid-4864989C-DB66-4038-9361-EE0415A76F23" targetRef="startGwProcessTask" associationDirection="None"></association>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_bottomup_mobile">
+    <bpmndi:BPMNPlane bpmnElement="bottomup_mobile" id="BPMNPlane_bottomup_mobile">
+      <bpmndi:BPMNShape bpmnElement="startEvent" id="BPMNShape_startEvent">
+        <omgdc:Bounds height="30.0" width="30.0" x="135.0" y="169.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="catchConnectionSignal" id="BPMNShape_catchConnectionSignal">
+        <omgdc:Bounds height="30.0" width="30.0" x="240.0" y="169.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-644B9674-E29E-4700-B64D-7BA070AA9D72" id="BPMNShape_sid-644B9674-E29E-4700-B64D-7BA070AA9D72">
+        <omgdc:Bounds height="43.0" width="225.0" x="190.0" y="64.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-1080E584-010B-4BF7-885F-3F12A69D4690" id="BPMNShape_sid-1080E584-010B-4BF7-885F-3F12A69D4690">
+        <omgdc:Bounds height="64.2902438857293" width="40.60198071487031" x="206.02029870506485" y="106.44425305713534"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startGwProcessTask" id="BPMNShape_startGwProcessTask">
+        <omgdc:Bounds height="80.0" width="100.0" x="420.0" y="144.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="receiveWorkResultMessage" id="BPMNShape_receiveWorkResultMessage">
+        <omgdc:Bounds height="30.0" width="30.0" x="570.0" y="169.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endEvent" id="BPMNShape_endEvent">
+        <omgdc:Bounds height="28.0" width="28.0" x="645.0" y="170.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-4864989C-DB66-4038-9361-EE0415A76F23" id="BPMNShape_sid-4864989C-DB66-4038-9361-EE0415A76F23">
+        <omgdc:Bounds height="71.0" width="261.0" x="390.0" y="30.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-A77BC6E8-F7FC-43E4-AAD1-482085B5BB62" id="BPMNShape_sid-A77BC6E8-F7FC-43E4-AAD1-482085B5BB62">
+        <omgdc:Bounds height="53.59517380527657" width="34.58747915935919" x="409.4766901078204" y="90.21585059736171"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="gatewayXOR" id="BPMNShape_gatewayXOR">
+        <omgdc:Bounds height="40.0" width="40.0" x="330.0" y="164.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-41FA848E-659F-46F5-80C4-C1E59FD7ADF1" id="BPMNEdge_sid-41FA848E-659F-46F5-80C4-C1E59FD7ADF1">
+        <omgdi:waypoint x="369.5215994962154" y="184.42016806722688"></omgdi:waypoint>
+        <omgdi:waypoint x="419.99999999998505" y="184.20899581589958"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-ECD41D57-3EBA-4DD8-880C-85F361B6A565" id="BPMNEdge_sid-ECD41D57-3EBA-4DD8-880C-85F361B6A565">
+        <omgdi:waypoint x="519.95" y="184.0"></omgdi:waypoint>
+        <omgdi:waypoint x="570.0" y="184.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-FEAA1F76-19A7-40E7-832E-83A32C019841" id="BPMNEdge_sid-FEAA1F76-19A7-40E7-832E-83A32C019841">
+        <omgdi:waypoint x="599.9499966648511" y="184.0"></omgdi:waypoint>
+        <omgdi:waypoint x="645.0" y="184.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-9E099332-32E0-4B65-8FDA-B90D58D666A0" id="BPMNEdge_sid-9E099332-32E0-4B65-8FDA-B90D58D666A0">
+        <omgdi:waypoint x="350.5" y="164.5"></omgdi:waypoint>
+        <omgdi:waypoint x="350.5" y="128.0"></omgdi:waypoint>
+        <omgdi:waypoint x="272.5" y="128.0"></omgdi:waypoint>
+        <omgdi:waypoint x="259.4604020131318" y="169.67897681565364"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-4B19B59F-4A31-4A56-A98E-E8F9DEF2A2A8" id="BPMNEdge_sid-4B19B59F-4A31-4A56-A98E-E8F9DEF2A2A8">
+        <omgdi:waypoint x="269.94975754350014" y="184.07827121990647"></omgdi:waypoint>
+        <omgdi:waypoint x="330.3947368421053" y="184.3947368421053"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-1080E584-010B-4BF7-885F-3F12A69D4690" id="BPMNEdge_sid-1080E584-010B-4BF7-885F-3F12A69D4690">
+        <omgdi:waypoint x="246.98940783599537" y="171.31475570974447"></omgdi:waypoint>
+        <omgdi:waypoint x="206.33969907407408" y="106.94999999999999"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-96F6A3D5-75CB-4FDB-812B-263289B770C1" id="BPMNEdge_sid-96F6A3D5-75CB-4FDB-812B-263289B770C1">
+        <omgdi:waypoint x="164.9499983427931" y="184.0"></omgdi:waypoint>
+        <omgdi:waypoint x="240.0" y="184.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-A77BC6E8-F7FC-43E4-AAD1-482085B5BB62" id="BPMNEdge_sid-A77BC6E8-F7FC-43E4-AAD1-482085B5BB62">
+        <omgdi:waypoint x="416.4039401267512" y="100.95"></omgdi:waypoint>
+        <omgdi:waypoint x="444.18612408272185" y="144.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

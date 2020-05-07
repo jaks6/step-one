@@ -1,0 +1,129 @@
+Scenario.name = Bottom-Up
+
+Scenario.endTime = 3600
+
+# ---------------------------------
+# W L A N      I N T E R F A C E
+# ---------------------------------
+wlanInterface.type = DistanceCapacityInterface
+
+# values from http://www.xirrus.com/cdn/pdf/wifi-demystified/documents_posters_range_plotter
+# 0-50ft:54Mbps, 75-100ft:48 Mbps, 125ft:36Mbps, 150ft:24 Mbps, 175ft:18Mbps,
+# 200ft:12Mbps, 225ft:9Mbps, 250ft:6Mbps, 275ft:2Mbps, 300ft:1Mbps
+wlanInterface.transmitSpeeds = 6750k, 6750k, 6750k, 6000k, 6000k, 4500k, 3000k, 2250k, 1500k, 1125k, 750k, 250k, 125k
+wlanInterface.transmitRange = 20
+
+# dummy speed, not used
+wlanInterface.transmitSpeed = 0
+
+# ---------------------------------
+# WIRED      I N T E R F A C E
+# ---------------------------------
+wiredInterface.type = SimpleBroadcastInterface
+# Speed: 100Mbps
+wiredInterface.transmitSpeed = 100M
+wiredInterface.transmitRange = 100
+
+
+## MAP
+MapBasedMovement.nrofMapFiles = 2
+# dummymap is used as a reference point for static locations defined below in locations.wkt
+MapBasedMovement.mapFile1 = samples/bottom-up/dummymap.wkt
+MapBasedMovement.mapFile2 = samples/bottom-up/movementmap.wkt
+
+## ------------------------
+##   HOST GROUPS
+## ------------------------
+Scenario.nrofHostGroups = 4
+
+# Common settings for all groups
+Group.router = ProphetV2Router
+ProphetV2Router.secondsInTimeUnit = 10
+
+Group.bufferSize = 512M
+Group.waitTime = 15, 30
+# ~5 km/h
+Group.speed = 1.3, 1.5
+
+# 1) MOBILE NODE GROUP
+Group1.nrofHosts = 6
+Group1.nodeLocation = 100,100
+Group1.groupID = Mobile
+
+# 2) FOG NODE GROUP
+Group2.nrofHosts = 5
+Group2.nodeLocation = 350,200
+Group2.groupID = FogA
+Group2.movementModel = StaticMovement
+Group2.staticLocationFile = samples/bottom-up/locations.wkt
+
+# 3) Gateway NODE GROUP
+Group3.nrofHosts = 1
+Group3.nodeLocation = 175,325
+Group3.groupID = GW
+
+
+# 4) CLOUD NODE GROUP
+Group4.nrofHosts = 1
+Group4.nodeLocation = 375,121
+Group4.groupID = Cloud
+
+
+# By default all groups have wired interface, except mobile who only has wireless and gateway has both
+
+Group.nrofInterfaces = 1
+Group.interface1 = wiredInterface
+
+Group1.nrofInterfaces = 1
+Group1.interface1 = wlanInterface
+
+Group3.nrofInterfaces = 2
+Group3.interface1 = wlanInterface
+Group3.interface2 = wiredInterface
+
+
+
+## Movement
+Group1.movementModel = MapRouteMovement
+Group1.routeFile = samples/bottom-up/movementmap.wkt
+# See MapRoute class for details on routeTypes
+Group1.routeType = 2
+# the random seed influences starting positions for nodes along the route
+# the chosen value (11) makes the nodes start out more sparsely
+MovementModel.rngSeed = 11
+
+
+
+## ------------------------
+##   APPLICATIONS
+## ------------------------
+mobileProcessEngine.type = bpm.BpmEngineApplication
+fogProcessEngine.type = bpm.BpmEngineApplication
+cloudProcessEngine.type = bpm.BpmEngineApplication
+gatewayProcessEngine.type = bpm.BpmEngineApplication
+
+
+Group.nrofApplications = 1
+
+Group1.application1 = mobileProcessEngine
+Group2.application1 = fogProcessEngine
+Group3.application1 = gatewayProcessEngine
+Group4.application1 = cloudProcessEngine
+
+
+mobileProcessEngine.autoDeployedProcesses = samples/bottom-up/Bottom-Up_Mobile.bpmn20.xml
+mobileProcessEngine.autoStartedProcessKeys = bottomup_mobile
+mobileProcessEngine.autoStartedProcessVars = workSize=3150000&noOfHops=3
+
+gatewayProcessEngine.autoDeployedProcesses = samples/bottom-up/Bottom-Up_Gateway.bpmn20.xml
+
+fogProcessEngine.autoDeployedProcesses = samples/bottom-up/Propagative_Server_Load_Reporting.bpmn20.xml
+cloudProcessEngine.autoDeployedProcesses = samples/bottom-up/Propagative_Server_Load_Reporting.bpmn20.xml
+
+
+## Hardware configuration
+cloudProcessEngine.noOfCpus = 24
+cloudProcessEngine.cpuSpeed = 55000
+
+fogProcessEngine.noOfCpus = 2
+fogProcessEngine.cpuSpeed = 31500

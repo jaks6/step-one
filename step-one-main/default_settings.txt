@@ -72,7 +72,7 @@ Group2.application1 = processEngineApp2
 # seed for movement models' pseudo random number generator (default = 0)
 MovementModel.rngSeed = 1
 # World's size for Movement Models without implicit size (width, height; meters)
-MovementModel.worldSize = 500, 500
+MovementModel.worldSize = 1000, 1000
 
 ## messages are handled in-engine
 Events.nrof = 0 

@@ -77,8 +77,7 @@ public class OneSimClock implements Clock {
 
         if (CURRENT_TIME == null){
             // Milliseconds since ePoch
-            Date date = new Date((long) SimClock.getTime() * 1000l);
-            return date;
+            return new Date((long) SimClock.getTime() * 1000L); //TODO: see if CURRENT_TIME can be set and re-used, reset() every simulation update
         }
         return CURRENT_TIME.getTime();
     }
@@ -90,7 +89,7 @@ public class OneSimClock implements Clock {
 
         if (CURRENT_TIME == null) {
             GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTime(new Date((long) SimClock.getTime() * 1000l));
+            calendar.setTime(new Date((long) SimClock.getTime() * 1000L));
             //return (timeZone == null) ? new GregorianCalendar() : new GregorianCalendar(timeZone);
             return calendar;
         }
