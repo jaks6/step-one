@@ -14,6 +14,8 @@ public class NewConnectionListener implements ConnectionListener {
     private static Logger log = LoggerFactory.getLogger(NewConnectionListener.class);
 
 
+    public static final String LAST_DISCONNECT_ADDR_VARIABLENAME = "lastDisconnectAddress";
+    public static final String LAST_CONNECT_ADDR_VARIABLENAME = "lastConnectAddress";
     static {
         DTNSim.registerForReset(NewConnectionListener.class.getCanonicalName());
         reset();
@@ -41,11 +43,11 @@ public class NewConnectionListener implements ConnectionListener {
         HashMap<String, Object> processVars = new HashMap<String, Object>();
 
         // Send Signal to host1
-        processVars.put("sig_remote_address", host2.getAddress());
+        processVars.put(LAST_CONNECT_ADDR_VARIABLENAME, host2.getAddress());
         signalConnected(host1, BpmEngineApplication.SIGNAL_NEARBY_DEVICE, processVars);
 
         // Send Signal to host2
-        processVars.put("sig_remote_address", host1.getAddress());
+        processVars.put(LAST_CONNECT_ADDR_VARIABLENAME, host1.getAddress());
         signalConnected(host2, BpmEngineApplication.SIGNAL_NEARBY_DEVICE, processVars);
 
     }
@@ -55,11 +57,11 @@ public class NewConnectionListener implements ConnectionListener {
         HashMap<String, Object> processVars = new HashMap<String, Object>();
 
         // Send Signal to host1
-        processVars.put("sig_remote_address", host2.getAddress());
+        processVars.put(LAST_DISCONNECT_ADDR_VARIABLENAME, host2.getAddress());
         signalConnected(host1, BpmEngineApplication.SIGNAL_DISCONNECTED, processVars);
 
         // Send Signal to host2
-        processVars.put("sig_remote_address", host1.getAddress());
+        processVars.put(LAST_DISCONNECT_ADDR_VARIABLENAME, host1.getAddress());
         signalConnected(host2, BpmEngineApplication.SIGNAL_DISCONNECTED, processVars);
 
 

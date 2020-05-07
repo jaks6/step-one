@@ -15,7 +15,7 @@
           <flowable:string><![CDATA[Some Message]]></flowable:string>
         </flowable:field>
         <flowable:field name="msg_destination">
-          <flowable:expression><![CDATA[${sig_remote_address}]]></flowable:expression>
+          <flowable:expression><![CDATA[${lastConnectAddress}]]></flowable:expression>
         </flowable:field>
         <flowable:field name="msg_size">
           <flowable:string><![CDATA[100]]></flowable:string>
