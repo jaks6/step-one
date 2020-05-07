@@ -40,12 +40,14 @@ public class BpmMessageListener implements MessageListener {
 
     /** notifySourceOfDelivery is assigned in bpmn using flowable:istriggerable */
     public void messageTransferred(Message msg, DTNHost from, DTNHost to, boolean firstDelivery) {
-        SimMessage simMsg = (SimMessage) msg.getProperty(BpmEngineApplication.PROPERTY_PROCESS_MSG);
+        if (msg.getTo() == to){
+            SimMessage simMsg = (SimMessage) msg.getProperty(BpmEngineApplication.PROPERTY_PROCESS_MSG);
 
-        if (simMsg!= null && simMsg.notifySourceOfDelivery){
+            if (simMsg!= null && simMsg.notifySourceOfDelivery){
 
-            BpmEngineApplication.ofHost(from).getEngine().notifyMessageTransferred(simMsg);
-            //from.deleteMessage(msg.getId(), false); //TODO: this may cause problems with routing/relaying
+                BpmEngineApplication.ofHost(msg.getFrom()).getEngine().notifyMessageTransferred(simMsg);
+                //from.deleteMessage(msg.getId(), false); //TODO: this may cause problems with routing/relaying
+            }
         }
     }
 
