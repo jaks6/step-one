@@ -1,22 +1,38 @@
-plugins {
-    id "application"
-}
 apply plugin : "java"
 version 'unspecified'
 ext {
     javaMainClass = "ee.mass.epm.stepone.StepOneSim"
 }
 
-application {
-    mainClassName = javaMainClass
+
+class StepONERun extends JavaExec {
+    @Override
+    @TaskAction
+    void exec() {
+        println 'Starting STEP-ONE from Gradle..'
+        List<String> args = super.getArgs();
+
+        // omit the step-one-main folder if args are prefixed with it. this is to avoid confusion
+        // when somebody calls it from project root. the actual java classpath used is the
+        // step-one-main subproject folder,even if calling from project root. this was causing confusion
+        for (int i = 0; i < args.size(); i++){
+            args[i] = args[i].replaceFirst("^(\\./)?step-one-main/", "")
+        }
+        super.setArgs(args);
+        super.exec()
+    }
 }
 
-task runWithJavaExec(type: JavaExec) {
-    group = "Execution"
-    description = "Run the main class with JavaExecTask"
+task run(type: StepONERun) {
+    group = "Application"
+    description = "Run the simulator main class with JavaExec, providing " +
+            "simulations settings file and other options, such as batch mode, using main class args with --args." +
+            "\n\nExamples:" +
+            "\n\t* Run a settings file in GUI mode:\n\t\t./gradlew run --args=step-one-main/samples/tutorial1_basic_messaging/settings.txt " +
+            "\n\n\t* Run a settings file in batch mode (1 iteration). Notice the quotation mark!:\n\t\t./gradlew run --args='-b 1 step-one-main/samples/tutorial1_basic_messaging/settings.txt'"
+
     classpath = sourceSets.main.runtimeClasspath
     main = javaMainClass
-    //args 'spe/trt/settings.txt'
 }
 
 

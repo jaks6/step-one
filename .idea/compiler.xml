@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="11">
       <module name="step-one.location-signals.main" target="1.8" />
       <module name="step-one.location-signals.test" target="1.8" />
       <module name="step-one.one-bpm-app.main" target="1.8" />
       <module name="step-one.one-bpm-app.test" target="1.8" />
-      <module name="step-one.sim-flowable.main" target="1.8" />
-      <module name="step-one.sim-flowable.test" target="1.8" />
+      <module name="step-one.step-one-main" target="1.8" />
       <module name="step-one.step-one-main.main" target="1.8" />
       <module name="step-one.step-one-main.test" target="1.8" />
       <module name="step-one.step-one-shared.main" target="1.8" />
       <module name="step-one.step-one-shared.test" target="1.8" />
-      <module name="step-one.the-one.main" target="1.8" />
-      <module name="step-one.the-one.test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
