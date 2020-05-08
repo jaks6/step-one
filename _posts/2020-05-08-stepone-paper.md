@@ -2,7 +2,7 @@
 layout: paginated_post
 title:  "Smart City Road Monitoring"
 date:   2020-05-05 13:00:32 +0300
-permalink: examples/bottom-up-offloading
+permalink: examples/smart-city-road-monitoring
 categories: examples
 ---
 
