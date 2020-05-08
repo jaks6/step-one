@@ -1,6 +1,6 @@
 ---
 layout: paginated_post
-title:  "Example: Cloud vs. Fog "
+title:  "Example: Cloud vs. Fog"
 date:   2020-04-07 13:00:32 +0300
 permalink: examples/cloud-vs-fog
 categories: examples
